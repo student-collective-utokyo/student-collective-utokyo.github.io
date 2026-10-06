@@ -1,0 +1,77 @@
+/* 「Studio Hours」のページ。クラス名は st- ではじめます。
+   白に近い紙の色に、角の青と黄色。右上のカードは、重ねた窓の形にします。 */
+body[data-view="studio"]{--paper:#F6F4EE;--ink:#14162B;--mute:#5d5f70;--body:#3a3c4e;--line:rgba(20,22,43,.12);--blue:#0B6BF2;--yel:#FFE45C;--mint:#8FE3B4;
+  --gh-line:rgba(20,22,43,.24);--gh-bg:rgba(255,255,255,.5);--ic-bg:#E3EEFF;--ic-fg:#0B6BF2;
+  color:var(--ink);background-color:var(--paper);background-repeat:no-repeat;background-size:100% 760px;
+  background-image:linear-gradient(rgba(246,244,238,0) 55%,#F6F4EE),
+    radial-gradient(40% 70% at 0% 0%,rgba(38,132,255,.5) 0,rgba(38,132,255,0) 72%),
+    radial-gradient(36% 64% at 100% 0%,rgba(255,226,60,.75) 0,rgba(255,226,60,0) 72%)}
+.st-wrap{max-width:1320px;margin:0 auto;padding:0 44px}
+
+/* いちばん上 */
+.st-hero{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:64px;align-items:center;padding:28px 0 44px}
+.st-hero-l{container-type:inline-size}
+.st-eyebrow{display:inline-block;font-size:14px;font-weight:700;line-height:1.5;border-radius:999px;padding:4px 14px;background:var(--ink);color:#fff}
+/* 見出しの文字は、左の幅に合わせて大きさが変わる（11文字ほどの行が1行に入る大きさ） */
+.st-h1{font-size:44px;font-size:clamp(26px,8.6cqw,62px);font-weight:700;line-height:1.26;letter-spacing:.01em;margin-top:16px}
+.st-h1 span{display:block}
+.st-lead{font-size:17px;font-weight:500;line-height:1.9;color:var(--body);max-width:33em;margin-top:16px}
+.st-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.st-hero .osc-btn-2{background:rgba(255,255,255,.6)}
+
+/* 「いつ・どこで」のカード：青い窓のうしろに、黄色と緑の窓を重ねる */
+.st-when{position:relative;margin:0 24px 24px 0}
+.st-when::before,.st-when::after{content:"";position:absolute;inset:0;border-radius:24px}
+.st-when::before{background:var(--mint);transform:translate(24px,24px)}
+.st-when::after{background:var(--yel);transform:translate(12px,12px)}
+.st-when-in{position:relative;z-index:1;background:var(--blue);color:#fff;border-radius:24px;padding:24px 28px 28px;min-height:188px}
+.st-when-lbl{font-size:14px;font-weight:700;opacity:.9}
+.st-when-big{font-size:54px;font-weight:800;line-height:1.2;letter-spacing:.01em;margin-top:6px}
+.st-when-ln{font-size:19px;font-weight:700;line-height:1.5;margin-top:2px}
+.st-when-note{font-size:14.5px;font-weight:600;line-height:1.7;margin-top:10px;padding-top:12px;border-top:1px solid rgba(255,255,255,.35)}
+
+/* 下の各ブロック */
+.st-sec{padding:34px 0 0;margin-top:34px;border-top:1px solid var(--line)}
+.st-sec > h2,.st-sec .osc-sh h2{font-size:24px;font-weight:700;line-height:1.4;letter-spacing:.01em}
+.st-sec > h2{margin-bottom:22px}
+.st-steps{max-width:1040px}
+.st-bring{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.st-bring li{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.72);border-radius:18px;padding:18px 20px 20px;box-shadow:inset 0 0 0 1px rgba(20,22,43,.07)}
+.st-bring b{display:block;font-size:16.5px;font-weight:700;line-height:1.5}
+.st-bring p{font-size:14px;line-height:1.75;color:var(--body);margin-top:2px}
+.st-made{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px}
+.st-empty{padding:44px 20px;border-radius:14px}
+.st-sec .ab-faq{max-width:860px}
+
+@media (max-width:1100px){
+  .st-hero{grid-template-columns:minmax(0,1fr) 320px;gap:36px}
+  .st-when-big{font-size:46px}
+  .st-made{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  body[data-view="studio"]{background-size:100% 520px;background-image:linear-gradient(rgba(246,244,238,0) 55%,#F6F4EE),
+    radial-gradient(70% 50% at 0% 0%,rgba(38,132,255,.45) 0,rgba(38,132,255,0) 72%),
+    radial-gradient(64% 46% at 100% 0%,rgba(255,226,60,.7) 0,rgba(255,226,60,0) 72%)}
+  .st-wrap{padding:0 16px}
+  .st-hero{display:block;padding:14px 0 26px}
+  .st-h1{margin-top:12px;line-height:1.3}
+  .st-lead{font-size:15px;line-height:1.85;margin-top:10px}
+  .st-acts{margin-top:18px;gap:8px}
+  .st-acts .osc-btn{flex:1 1 auto;height:48px;padding:0 16px;font-size:15px}
+  /* カードは横に長くして、曜日を左、時間と場所を右に */
+  .st-when{margin:24px 12px 12px 0}
+  .st-when::before{transform:translate(12px,12px);border-radius:20px}
+  .st-when::after{transform:translate(6px,6px);border-radius:20px}
+  .st-when-in{border-radius:20px;padding:16px 18px 18px;min-height:0}
+  .st-when-lbl{font-size:12.5px}
+  .st-when-big{font-size:34px;margin-top:2px}
+  .st-when-ln{font-size:16px}
+  .st-when-note{font-size:13.5px;margin-top:8px;padding-top:9px}
+  .st-sec{padding-top:26px;margin-top:28px}
+  .st-sec > h2,.st-sec .osc-sh h2{font-size:20px}
+  .st-sec > h2{margin-bottom:16px}
+  .st-bring{grid-template-columns:1fr;gap:10px}
+  .st-bring li{padding:14px 16px 16px}
+  .st-made{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+  .st-empty{padding:30px 16px}
+}

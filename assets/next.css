@@ -1,0 +1,140 @@
+/* 「次回」のページ。クラス名は nx- ではじめます。
+   青い面の上には大きな文字だけを置き、小さな文字は白い面の中に入れます。 */
+body[data-view="next"]{--blue:#0284FE;--green:#40C875;--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#3a3c4e;--line:rgba(20,22,43,.12);--tint:#E4F1FF;background:var(--paper);color:var(--ink)}
+.nx-wrap{max-width:1320px;margin:0 auto;padding:0 44px}
+
+/* 上のメニューは青い面に重ねる。いちばん上では白い文字、スクロールして固定されたら濃い文字 */
+body[data-view="next"] .osc-head{--hd-fg:#fff}
+body[data-view="next"].osc-stuck .osc-head{--hd-fg:#14162B}
+body[data-view="next"]:not(.osc-stuck) .osc-mark .osc-mark-b{display:none}   /* 青い面の上では、白いマークを出す */
+body[data-view="next"]:not(.osc-stuck) .osc-mark .osc-mark-w{display:block}
+.nx-top{color:#fff;margin-top:calc(-1 * var(--osc-headh));padding-top:calc(var(--osc-headh) + 8px);background:
+  radial-gradient(46% 60% at 100% 0%,var(--green) 0,rgba(64,200,117,0) 70%),
+  radial-gradient(34% 44% at 0% 100%,var(--green) 0,rgba(64,200,117,0) 72%),
+  radial-gradient(40% 48% at 74% 108%,var(--green) 0,rgba(64,200,117,0) 72%),
+  var(--blue);padding-bottom:98px}
+.nx-top.nx-nofacts{padding-bottom:48px}
+
+.nx-hero{display:grid;grid-template-columns:1fr 468px;gap:56px;align-items:end;padding-top:6px}
+.nx-lbl{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:700}
+.nx-lbl span{background:#fff;color:var(--ink);font-size:14px;font-weight:700;border-radius:999px;padding:3px 13px}
+.nx-date{display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 22px;margin-top:2px}   /* 入りきらないときは折り返す */
+.nx-date b{font-size:218px;font-weight:800;line-height:.98;letter-spacing:-.035em;margin-left:-8px;white-space:nowrap}
+.nx-date b small{font-size:.34em;font-weight:700;letter-spacing:0;margin:0 .02em 0 0}
+.nx-date b small + small,.nx-date b small:last-child{margin:0 0 0 .08em}
+.nx-date b.nx-tx{font-size:96px;line-height:1.25;letter-spacing:0;margin-left:0}
+.nx-side{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-bottom:26px}
+.nx-dow{width:60px;height:60px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-size:27px;font-weight:700}
+.nx-tbd{background:#fff;color:var(--ink);font-size:19px;font-weight:700;border-radius:999px;padding:6px 18px;white-space:nowrap}
+.nx-time{font-size:30px;font-weight:700;letter-spacing:-.005em;line-height:1.2;white-space:nowrap}
+.nx-h1{font-size:41px;line-height:1.42;font-weight:700;margin-top:12px;letter-spacing:.01em}
+.nx-h1.nx-auto{text-wrap:balance}
+.nx-act{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.nx-cta{height:56px;padding:0 30px;border-radius:999px;background:#fff;color:var(--ink);font-size:17px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+.nx-cta svg{width:16px;height:16px}
+.nx-cta:hover{background:#eef4ff}
+.nx-sec{height:56px;padding:0 26px;border-radius:999px;background:var(--ink);color:#fff;font-size:16px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.nx-sec:hover{background:#262948}
+.nx-wait{margin-top:26px;font-size:16px;font-weight:600;line-height:1.7;display:flex;gap:10px;align-items:flex-start;max-width:30em}
+.nx-wait svg{width:20px;height:20px;flex:none;margin-top:4px}
+
+/* 今学期の予定 */
+.nx-board{background:#fff;color:var(--ink);border-radius:18px;padding:22px 10px 18px}
+.nx-board h2{font-size:17px;font-weight:700;padding:0 16px 10px;display:flex;justify-content:space-between;align-items:baseline}
+.nx-board h2 small{font-size:12.5px;font-weight:500;color:var(--mute)}
+.nx-row{display:grid;grid-template-columns:86px 1fr auto;align-items:center;gap:8px;width:100%;padding:11px 16px;border-radius:12px;border-top:1px solid var(--line)}
+.nx-board h2 + .nx-row{border-top:0}
+.nx-d{font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.nx-d small{font-size:12.5px;font-weight:600;margin-left:5px;color:var(--mute)}
+.nx-d.nx-tx{font-size:14.5px;letter-spacing:0;line-height:1.4}
+.nx-n{font-size:15px;font-weight:700;line-height:1.4}
+.nx-s{font-size:12.5px;color:var(--mute);line-height:1.5}
+.nx-r{font-size:13px;font-weight:600;color:var(--body);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nx-r svg{width:14px;height:14px;opacity:.55}
+.nx-row.nx-done .nx-d,.nx-row.nx-done .nx-n{color:#4b4d60}
+button.nx-row:hover,a.nx-row:hover{background:rgba(20,22,43,.05)}
+.nx-row.nx-next{background:var(--tint);border-top-color:transparent}
+.nx-row.nx-next + .nx-row{border-top-color:transparent}
+.nx-row.nx-next .nx-r{background:var(--blue);color:#fff;padding:3px 12px;border-radius:999px;font-weight:700}
+.nx-note{font-size:12.5px;line-height:1.7;color:var(--mute);padding:12px 16px 0;border-top:1px solid var(--line);margin-top:4px}
+
+/* 次回のくわしい内容：アイコンつきの4つのます */
+.nx-facts{position:relative;margin-top:-64px;background:#fff;border-radius:18px;border:1px solid rgba(20,22,43,.07);display:grid;grid-template-columns:repeat(4,1fr)}
+.nx-fact{display:grid;grid-template-columns:40px 1fr;column-gap:14px;align-items:center;padding:18px 22px 20px;border-left:1px solid var(--line)}
+.nx-fact:first-child{border-left:0}
+.nx-fact .osc-ic{grid-row:1 / span 2}
+.nx-fact dt{font-size:12px;font-weight:600;color:var(--mute);line-height:1.4;align-self:end}
+.nx-fact dd{font-size:17px;font-weight:700;line-height:1.45;align-self:start}
+.nx-fact dd small{display:block;font-size:13px;font-weight:500;color:var(--body);line-height:1.55}
+
+/* 作品 */
+.nx-peek{padding:34px 0 0}
+.nx-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+.nx-strip .nx-wide{grid-column:span var(--nx-span,3)}
+
+/* 活動記録 */
+.nx-recs{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.nx-rec{display:block;width:100%;border-radius:14px}
+.nx-rec img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px}
+.nx-rec-dt{display:flex;flex-wrap:wrap;gap:0 8px;font-size:12.5px;color:var(--mute);font-weight:600;margin-top:10px}
+.nx-rec-tt{display:block;font-size:16.5px;font-weight:700;line-height:1.55;margin-top:2px}
+.nx-rec:hover .nx-rec-tt{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1.5px}
+.nx-recs .osc-gh{grid-column:1 / -1;padding:34px 20px}
+
+@media (max-width:1180px){
+  .nx-hero{grid-template-columns:1fr 400px;gap:32px}
+  .nx-date b{font-size:150px}
+  .nx-date b.nx-tx{font-size:72px}
+  .nx-h1{font-size:32px}
+  .nx-strip{grid-template-columns:repeat(4,1fr)}
+  .nx-strip .osc-wkc:nth-child(n+5){display:none}
+  .nx-strip .nx-wide{grid-column:1 / -1;min-height:96px}
+  .nx-facts{grid-template-columns:1fr 1fr}
+  .nx-fact:nth-child(3){border-left:0}
+  .nx-fact:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:860px){
+  .nx-wrap{padding:0 16px}
+  .nx-top{padding-top:calc(var(--osc-headh) + 4px);padding-bottom:72px;background:
+    radial-gradient(70% 34% at 100% 0%,var(--green) 0,rgba(64,200,117,0) 72%),
+    radial-gradient(70% 30% at 0% 100%,var(--green) 0,rgba(64,200,117,0) 72%),
+    var(--blue)}
+  .nx-top.nx-nofacts{padding-bottom:36px}
+  .nx-hero{display:block;padding-top:10px}
+  .nx-lbl{font-size:19px;gap:10px}
+  .nx-lbl span{font-size:13px}
+  .nx-date{gap:14px;margin-top:4px}
+  .nx-date b{font-size:112px;margin-left:-4px}
+  .nx-date b.nx-tx{font-size:54px;margin-left:0}
+  .nx-side{gap:6px;padding-bottom:12px}
+  .nx-side:has(.nx-dow){flex-basis:100%;flex-direction:row;align-items:center;gap:10px;padding-bottom:0}   /* 日付が決まったら、曜日と時刻は日付の下の行に */
+  .nx-dow{width:42px;height:42px;font-size:19px}
+  .nx-tbd{font-size:15px;padding:4px 13px}
+  .nx-time{font-size:20px}
+  .nx-h1{font-size:25px;line-height:1.45;margin-top:10px}
+  .nx-act{margin-top:20px;gap:10px}
+  .nx-cta{height:54px;flex:1 1 100%;font-size:16.5px}
+  .nx-sec{height:48px;flex:1 1 100%;font-size:15px}
+  .nx-wait{font-size:15px;margin-top:18px}
+  .nx-board{display:none}
+  .nx-board.nx-m{display:block;margin-top:22px;border:1px solid rgba(20,22,43,.07);padding:18px 4px 16px}
+  .nx-top.nx-nofacts + .nx-wrap .nx-board.nx-m{margin-top:16px}
+  .nx-row{grid-template-columns:74px 1fr auto;padding:11px 12px}
+  .nx-d{font-size:19px}
+  .nx-d.nx-tx{font-size:13.5px}
+  .nx-facts{margin-top:-52px}
+  .nx-fact{grid-template-columns:32px 1fr;gap:7px 9px;padding:13px 14px 14px}
+  .nx-fact .osc-ic{grid-row:1;width:32px;height:32px;border-radius:10px}
+  .nx-fact .osc-ic svg{width:18px;height:18px}
+  .nx-fact dt{align-self:center}
+  .nx-fact dd{grid-column:1 / -1;font-size:15.5px;line-height:1.4}
+  .nx-fact dd small{font-size:12px;margin-top:2px}
+  .nx-peek{padding-top:30px}
+  .nx-strip{grid-template-columns:repeat(2,1fr);gap:18px 12px}
+  .nx-strip .nx-wide{grid-column:auto;aspect-ratio:4/3;align-self:start;min-height:0;padding:10px}
+  .nx-strip .nx-wide p{font-size:13px}
+  .nx-strip .nx-wide small{display:none}
+  .nx-recs{grid-template-columns:1fr;gap:20px}
+  .nx-recs .osc-gh{padding:26px 16px}
+}
+@media (min-width:861px){ .nx-board.nx-m{display:none} }

@@ -1,0 +1,74 @@
+/* 「活動記録」のページ。クラス名は rc- ではじめます。
+   白に近い紙の色に、角の緑。区切りは細い線と余白で作ります。 */
+body[data-view="records"]{--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#33354a;--deep:#157A43;--line:rgba(20,22,43,.16);
+  --plan-bg:rgba(255,255,255,.72);--gh-line:rgba(20,22,43,.26);--gh-bg:rgba(255,255,255,.45);
+  color:var(--ink);background-color:var(--paper);background-repeat:no-repeat;background-size:100% 980px;
+  background-image:radial-gradient(34% 40% at 100% 0%,rgba(64,200,117,.95) 0,rgba(64,200,117,0) 72%),
+    radial-gradient(22% 30% at 0% 52%,rgba(64,200,117,.42) 0,rgba(64,200,117,0) 72%)}
+.rc-wrap{max-width:1320px;margin:0 auto;padding:0 44px}
+
+/* 題字 */
+.rc-plate{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;border-top:2px solid var(--ink);padding:18px 0 16px;margin-top:6px}
+.rc-plate h1{font-size:68px;font-weight:700;line-height:1.1;letter-spacing:.04em}
+.rc-meta{text-align:right;font-size:13.5px;line-height:1.8;color:var(--body)}
+.rc-meta b{font-weight:700;color:var(--ink)}
+.rc-meta em{font-style:normal;font-weight:600}
+
+/* 次回のお知らせ：1行 */
+.rc-notice{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:18px;width:100%;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0;font-size:15px}
+.rc-tag{background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;padding:2px 12px;border-radius:999px}
+.rc-when{font-weight:700;white-space:nowrap}
+.rc-what{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--body)}
+.rc-what b{color:var(--ink);font-weight:700;margin-right:10px}
+.rc-go{font-weight:700;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.rc-go svg{width:14px;height:14px}
+.rc-notice:hover .rc-go{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1.5px}
+
+/* 記録：左にいちばん新しいもの、右にそれより前のもの */
+.rc-main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:0 56px;padding-top:28px}
+.rc-main.rc-solo{display:block;max-width:860px}
+.rc-lead figure{margin:0}
+.rc-lead img{width:100%;aspect-ratio:2/1;object-fit:cover;border-radius:14px}
+.rc-kick{display:flex;flex-wrap:wrap;gap:0 10px;font-size:14.5px;font-weight:700;color:var(--deep);margin-top:20px}
+.rc-lead h2{font-size:40px;line-height:1.4;font-weight:700;margin-top:6px;letter-spacing:.01em;text-wrap:balance}
+.rc-side{border-left:1px solid var(--line);padding-left:32px}
+.rc-side h3{font-size:14px;font-weight:700;padding-bottom:10px}
+.rc-it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:start;padding:16px 0;border-top:1px solid var(--line)}
+.rc-dt{display:flex;flex-wrap:wrap;gap:0 8px;font-size:12.5px;color:var(--mute);font-weight:600}
+.rc-dt span{white-space:nowrap}
+.rc-tt{font-size:16.5px;font-weight:700;line-height:1.55;margin-top:3px}
+.rc-it img{width:84px;height:64px;object-fit:cover;border-radius:8px}
+
+/* まだ記録がないとき */
+.rc-empty{margin-top:28px;min-height:300px;border-radius:14px;padding:34px 20px}
+.rc-empty p{font-size:17px}
+.rc-empty p small{font-size:13.5px;margin-top:2px}
+
+.rc-term{padding-top:44px}
+
+@media (max-width:1100px){
+  .rc-main{grid-template-columns:minmax(0,1fr) 300px;gap:0 36px}
+  .rc-side{padding-left:24px}
+  .rc-lead h2{font-size:33px}
+  .rc-plate h1{font-size:54px}
+}
+@media (max-width:860px){
+  body[data-view="records"]{background-size:100% 560px;background-image:radial-gradient(70% 26% at 100% 0%,rgba(64,200,117,.95) 0,rgba(64,200,117,0) 72%)}
+  .rc-wrap{padding:0 16px}
+  .rc-plate{display:block;padding:12px 0 12px}
+  .rc-plate h1{font-size:38px}
+  .rc-meta{text-align:left;font-size:12.5px;margin-top:6px}
+  .rc-notice{grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;padding:11px 0;font-size:14px}
+  .rc-what{grid-column:1 / span 2;grid-row:2;white-space:normal;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+  .rc-what b{display:none}
+  .rc-go{grid-column:3;grid-row:1 / span 2}
+  .rc-main{display:block;padding-top:16px}
+  .rc-lead img{aspect-ratio:4/3;border-radius:12px}
+  .rc-kick{font-size:13.5px;margin-top:14px}
+  .rc-lead h2{font-size:27px;line-height:1.42;margin-top:4px}
+  .rc-side{border-left:0;padding-left:0;margin-top:34px;border-top:2px solid var(--ink);padding-top:16px}
+  .rc-side h3{font-size:15px}
+  .rc-empty{margin-top:18px;min-height:200px;padding:26px 16px}
+  .rc-empty p{font-size:15px}
+  .rc-term{padding-top:32px}
+}

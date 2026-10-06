@@ -1,0 +1,117 @@
+/* 「はじめての方へ」のページ。クラス名は ab- ではじめます。
+   角の丸い大きなブロックを、1つずつ色を変えて上から並べます。影はつけず、ブロックどうしは重ねません。 */
+body[data-view="about"]{--blue:#0284FE;--green:#40C875;--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#3a3c4e;--line:rgba(20,22,43,.12);--osc-w:1216px;--osc-gut:32px;background:var(--paper);color:var(--ink)}
+.ab-page{max-width:1280px;margin:0 auto;padding:6px 32px 0}
+
+/* いちばん上 */
+.ab-hero{container-type:inline-size;border-radius:28px;overflow:hidden;padding:64px 60px 62px;background:
+  radial-gradient(54% 96% at 100% 0%,#BFE9D2 0,rgba(191,233,210,0) 72%),
+  radial-gradient(44% 86% at 0% 100%,#F0EC9E 0,rgba(240,236,158,0) 70%),
+  radial-gradient(60% 90% at 36% 0%,#CFC6EA 0,rgba(207,198,234,0) 76%),
+  #EAE6F5}
+.ab-eyebrow{display:inline-block;font-size:14px;font-weight:700;line-height:1.5;border-radius:999px;padding:4px 14px;background:var(--ink);color:#fff}
+.ab-h1{font-size:62px;font-weight:700;line-height:1.28;letter-spacing:.01em;margin-top:18px}
+.ab-lead{font-size:18px;font-weight:500;line-height:1.9;color:#2a2c3e;max-width:34em;margin-top:18px}
+.ab-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+.ab-hero .osc-btn-2{background:rgba(255,255,255,.6)}
+
+/* 01〜05 のブロック */
+.ab-sec{border-radius:28px;padding:40px 44px 44px;margin-top:20px;display:grid;grid-template-columns:288px minmax(0,1fr);gap:40px;box-shadow:inset 0 0 0 1px rgba(20,22,43,.08);--ic-bg:rgba(255,255,255,.8);--ic-fg:#14162B}
+.ab-c1{background:#E2EFFE}
+.ab-c2{background:#EEE6FB}
+.ab-c3{background:#DFF2E6}
+.ab-c4{background:#FFEBDC}
+.ab-c5{background:#fff}
+.ab-no{display:block;font-size:14px;font-weight:700;color:var(--mute)}
+.ab-hd h2{font-size:28px;font-weight:700;line-height:1.36;letter-spacing:.01em;margin-top:4px}
+.ab-body > p{font-size:17px;line-height:1.95;color:var(--body);max-width:36em}
+.ab-body > p + p{margin-top:12px}
+.ab-body > p.ab-cap{font-size:13.5px;line-height:1.7;color:var(--mute);margin-top:12px;display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px}
+.ab-link{display:inline-flex;align-items:center;gap:5px;font-size:14.5px;font-weight:700;color:var(--ink);padding:6px 0}
+.ab-link svg{width:13px;height:13px}
+.ab-link:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* 01：3つの数字と、公式ページからの引用 */
+.ab-stats{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px;max-width:640px}
+.ab-stats li{border-radius:16px;padding:14px 16px 15px;background:rgba(255,255,255,.8)}
+.ab-stats b{display:block;font-size:24px;font-weight:700;line-height:1.3;letter-spacing:.01em}
+.ab-stats span{display:block;font-size:13px;line-height:1.5;color:var(--body);margin-top:2px}
+.ab-quote{margin:22px 0 0;max-width:640px;border-left:3px solid var(--ink);padding:2px 0 2px 18px}
+.ab-quote blockquote{margin:0;font-size:19px;font-weight:700;line-height:1.75;letter-spacing:.01em}
+.ab-quote figcaption{display:flex;align-items:center;flex-wrap:wrap;gap:2px 10px;font-size:13.5px;color:var(--mute);margin-top:8px}
+
+/* 02：作品のカード */
+.ab-works{display:grid;grid-template-columns:repeat(2,minmax(0,220px));gap:18px;margin-top:22px}
+
+/* 03：今学期にやること */
+.ab-acts3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.ab-act{border-radius:20px;padding:22px;background:rgba(255,255,255,.82)}
+.ab-act h3{font-size:16px;font-weight:700;margin-top:14px}
+.ab-act b{display:block;font-size:34px;font-weight:700;line-height:1.3;letter-spacing:.01em}
+.ab-act p{font-size:14.5px;line-height:1.8;color:var(--body);margin-top:8px}
+.ab-more{display:block;margin-top:6px}
+.ab-act small{display:block;font-size:13px;line-height:1.6;color:var(--mute);border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
+
+/* 04：運営メンバー */
+/* 名前の右に、Campus Leadのバッジを置く。バッジは大きさだけを変えて、そのまま置く */
+.ab-who-row{display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:612px;margin-top:14px}
+.ab-who{display:flex;gap:14px 34px;flex-wrap:wrap}
+.ab-badge{width:148px;height:148px;flex:none}
+.ab-who p{display:flex;align-items:center;gap:13px;font-size:17px;font-weight:700;line-height:1.35}
+.ab-who small{display:block;font-size:13px;font-weight:500;color:var(--mute)}
+.ab-who .osc-mono{width:48px;height:48px;font-size:19px}
+
+/* 05：参加するまでの3つの手順と、よくある質問 */
+.ab-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;counter-reset:st;list-style:none;padding:0}
+.ab-step{counter-increment:st;position:relative;padding-top:46px}
+.ab-step::before{content:counter(st);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:700;background:var(--ink);color:#fff}
+.ab-step h3{font-size:16.5px;font-weight:700;line-height:1.5}
+.ab-step p{font-size:14.5px;line-height:1.8;color:var(--body);margin-top:4px}
+.ab-faq-h{font-size:14px;font-weight:700;color:var(--mute);margin-top:38px;padding-bottom:10px}
+.ab-faq details{border-top:1px solid var(--line)}
+.ab-faq details:last-child{border-bottom:1px solid var(--line)}
+.ab-faq summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 2px;font-size:16.5px;font-weight:700;line-height:1.6}
+.ab-faq summary::-webkit-details-marker{display:none}
+.ab-faq summary svg{width:20px;height:20px;flex:none;opacity:.55;transition:transform .2s}
+.ab-faq details[open] summary svg{transform:rotate(180deg)}
+.ab-faq details p{padding:0 2px 18px;font-size:15.5px;line-height:1.9;color:var(--body);max-width:38em}
+
+/* いちばん下の呼びかけ */
+.ab-final{border-radius:28px;background:var(--ink);color:#fff;text-align:center;padding:58px 24px 60px;margin-top:20px}
+.ab-final h2{font-size:34px;font-weight:700;line-height:1.4;letter-spacing:.01em}
+.ab-final .osc-btn{margin-top:22px;background:#fff;color:var(--ink)}
+.ab-final .osc-btn:focus-visible{outline-color:#fff;box-shadow:0 0 0 2px var(--ink)}   /* 暗い背景の上の白いボタンなので、線の色を逆にする */
+
+@media (max-width:1100px){
+  .ab-hero{padding:48px 40px}
+  .ab-h1{font-size:50px}
+  .ab-sec{grid-template-columns:220px minmax(0,1fr);gap:28px;padding:34px 34px 38px}
+}
+@media (max-width:860px){
+  body[data-view="about"]{--osc-gut:16px}   /* 上のサイト名の左端を、本文の左端にそろえる */
+  .ab-page{padding:6px 16px 0}
+  .ab-hero{border-radius:24px;padding:30px 22px 28px}
+  .ab-h1{font-size:36px;font-size:clamp(26px,12cqw,36px);line-height:1.32;margin-top:14px}   /* 1行が8文字まで入るように、幅に合わせて小さくする */
+  .ab-lead{font-size:15.5px;line-height:1.85;margin-top:12px}
+  .ab-acts{margin-top:22px}
+  .ab-acts .osc-btn{flex:1 1 100%}
+  .ab-sec{display:block;border-radius:24px;padding:24px 20px 26px;margin-top:14px}
+  .ab-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+  .ab-hd h2{font-size:22px;margin-top:0}
+  .ab-body > p{font-size:16px;line-height:1.9}
+  .ab-stats{grid-template-columns:1fr;gap:8px}
+  .ab-stats li{display:flex;align-items:baseline;gap:8px;padding:11px 14px}
+  .ab-stats b{font-size:20px}
+  .ab-quote blockquote{font-size:17px}
+  .ab-works{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+  .ab-who-row{gap:14px;margin-top:12px}
+  .ab-badge{width:112px;height:112px}
+  .ab-acts3{grid-template-columns:1fr;gap:12px}
+  .ab-act{padding:18px}
+  .ab-act b{font-size:28px}
+  .ab-steps{grid-template-columns:1fr;gap:18px}
+  .ab-step{padding:0 0 0 48px;min-height:34px}
+  .ab-faq summary{font-size:15.5px;padding:14px 0}
+  .ab-final{border-radius:24px;padding:40px 20px 42px;margin-top:14px}
+  .ab-final h2{font-size:25px}
+}

@@ -1,0 +1,174 @@
+/* 「作品」のページ。クラス名は ws- ではじめます。
+   うすい色の背景の上に、作品を大きく並べます。右上の小さなカードで次回のイベントを知らせます。 */
+body[data-view="works"]{--paper:#F5F3F4;--ink:#14162B;--mute:#5d5f70;--body:#3a3c4e;--line:rgba(20,22,43,.12);--lav:#CFC6EA;--mint:#C4EBD6;--yel:#EFEB9C;
+  --plan-bg:rgba(255,255,255,.72);--gh-line:rgba(20,22,43,.24);--gh-bg:rgba(255,255,255,.45);
+  color:var(--ink);background-color:var(--paper);background-repeat:no-repeat;background-size:100% 860px;
+  /* いちばん上の層は、下に向かって色を消すためのもの */
+  background-image:linear-gradient(rgba(245,243,244,0) 62%,#F5F3F4),
+    radial-gradient(620px 480px at 98% 0%,#CFF0DF 0,rgba(207,240,223,0) 72%),
+    radial-gradient(560px 460px at 2% 70%,#E6D6F4 0,rgba(230,214,244,0) 72%),
+    radial-gradient(420px 320px at 62% 52%,#F5F1BE 0,rgba(245,241,190,0) 72%)}
+.ws-wrap{max-width:1320px;margin:0 auto;padding:0 44px}
+
+/* ── 見出しと、次回の小さなカード ── */
+.ws-hero{display:grid;grid-template-columns:minmax(0,1fr) 404px;gap:64px;align-items:center;padding:16px 0 32px}
+.ws-hero-l{container-type:inline-size}
+/* 見出しの文字は、左の幅に合わせて大きさが変わる（13文字ほどの行が1行に入る大きさ） */
+.ws-h1{font-size:40px;font-size:clamp(21px,7.2cqw,54px);line-height:1.28;font-weight:700;letter-spacing:.01em}
+.ws-ln{display:block}
+.ws-mk{background:linear-gradient(transparent 64%,var(--lav) 64%,var(--lav) 92%,transparent 92%)}
+.ws-mk.ws-n{padding:0 .08em;margin-right:.1em}
+.ws-lead{font-size:16px;line-height:1.8;color:var(--body);margin-top:16px;max-width:44em}
+
+.ws-nx{position:relative;margin:0 22px 22px 0}
+.ws-nx::before,.ws-nx::after{content:"";position:absolute;inset:0;border-radius:22px;border:1.5px solid rgba(255,255,255,.95);z-index:0}
+.ws-nx::before{background:var(--yel);transform:translate(22px,22px)}
+.ws-nx::after{background:var(--mint);transform:translate(11px,11px)}
+.ws-nx-in{position:relative;z-index:1;background:var(--lav);border:1.5px solid rgba(255,255,255,.95);border-radius:22px;padding:18px 24px 18px}
+.ws-nx-main{display:block;width:100%;border-radius:10px}
+.ws-nx-main > span{display:block}
+.ws-nx-lbl{font-size:13px;font-weight:700}
+.ws-nx-main > .ws-nx-when{display:flex;align-items:baseline;gap:8px;margin-top:4px;flex-wrap:wrap}
+.ws-nx-when b{font-size:40px;font-weight:700;line-height:1.1;letter-spacing:-.01em}
+.ws-nx-when b.ws-nx-tx{font-size:30px;letter-spacing:.01em;line-height:1.3}
+.ws-nx-when span{font-size:17px;font-weight:700}
+.ws-nx-when i{font-style:normal;font-size:16px;font-weight:600;margin-left:4px}
+.ws-nx-ttl{font-size:17px;font-weight:700;line-height:1.5;margin-top:8px}
+.ws-nx-meta{font-size:13px;line-height:1.6;color:#2c2a3a;margin-top:6px}
+a.ws-nx-main:hover .ws-nx-ttl{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+.ws-nx-soon{font-size:13.5px;font-weight:700;line-height:1.6;margin-top:12px;padding-top:11px;border-top:1px solid rgba(20,22,43,.16)}
+.ws-nx-foot{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;margin-top:12px}
+.ws-nx-soon + .ws-nx-foot{margin-top:6px}
+.ws-nx-btn{height:44px;padding:0 22px;font-size:14.5px}
+.ws-nx-btn .ws-s{display:none}
+.ws-nx-more{display:inline-flex;align-items:center;gap:4px;font-size:13.5px;font-weight:700;padding:6px 0;white-space:nowrap}
+.ws-nx-more svg{width:13px;height:13px}
+.ws-nx-more:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* ── 作品の壁 ── */
+.ws-grp{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px;padding:20px 0 6px;border-top:1px solid var(--line);font-size:17px;font-weight:700;line-height:1.5}
+.ws-grp small{font-size:13px;font-weight:500;color:var(--mute)}
+.ws-grp.ws-gap{margin-top:26px}
+.ws-wall{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:34px 24px;padding:10px 0 4px}
+.ws-wall.ws-top{border-top:1px solid var(--line);padding-top:24px}
+
+/* 絞り込み：左に分類のボタン、右に「つくった回」 */
+.ws-flt{display:flex;align-items:center;gap:8px;padding:16px 0 14px;border-top:1px solid var(--line)}
+.ws-chips{display:flex;gap:8px;flex-wrap:wrap}
+.ws-chip{height:38px;padding:0 15px;border-radius:999px;font-size:14px;font-weight:600;background:rgba(255,255,255,.72);box-shadow:inset 0 0 0 1px var(--line);display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.ws-chip small{font-size:12.5px;font-weight:500;color:var(--mute)}
+.ws-chip:hover{background:#fff}
+.ws-chip.on{background:var(--ink);color:#fff;box-shadow:none}
+.ws-chip.on small{color:rgba(255,255,255,.72)}
+.ws-chip:disabled{opacity:.38;cursor:default}
+.ws-chip:disabled:hover{background:rgba(255,255,255,.72)}
+.ws-sel{order:2;margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--mute);flex:none;white-space:nowrap}
+.ws-sel select{font:inherit;font-size:14px;font-weight:600;color:var(--ink);height:38px;padding:0 36px 0 15px;border-radius:999px;border:0;box-shadow:inset 0 0 0 1px var(--line);-webkit-appearance:none;appearance:none;cursor:pointer;
+  background:rgba(255,255,255,.72) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%2314162B' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><path d='M2.5 4.5L6 8l3.5-3.5'/></svg>") no-repeat right 14px center/12px}
+.ws-tile{display:flex;flex-direction:column;cursor:pointer;border-radius:16px;min-width:0}
+.ws-tile .th{transition:transform .18s,box-shadow .18s}
+.ws-tile:hover .th{transform:translateY(-3px);box-shadow:0 12px 26px rgba(20,22,43,.1)}
+.ws-tx{display:block}
+.ws-tt{display:block;font-size:16px;font-weight:700;line-height:1.45;margin-top:12px}
+.ws-ds{font-size:13.5px;line-height:1.65;color:var(--body);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ws-by{display:flex;align-items:center;flex-wrap:wrap;gap:4px 7px;margin-top:9px;font-size:12.5px;color:var(--body)}
+.ws-nm{font-weight:600;color:var(--ink)}
+.ws-tg{margin-left:auto;color:var(--mute);white-space:nowrap}
+.ws-by2 .ws-tg{flex-basis:100%;margin:-1px 0 0 31px;white-space:normal}   /* 名前の下の行に、名前の左端とそろえて出す */
+/* ピックアップの大きなカード：2列・2段ぶん */
+.ws-tile.ws-big{grid-column:span 2;grid-row:span 2}
+.ws-tile.ws-big .th{flex:1;aspect-ratio:auto;min-height:0;--th-r:18px}
+.ws-tile.ws-big .ws-tt{font-size:25px;margin-top:8px}
+.ws-tile.ws-big .ws-ds{font-size:15.5px;line-height:1.7;margin-top:4px}
+.ws-tile.ws-big .ws-by{font-size:13.5px;margin-top:11px}
+.ws-tile.ws-big .osc-mono{width:28px;height:28px;font-size:12.5px}
+.ws-pk{display:inline-block;font-size:12px;font-weight:700;margin-top:16px;padding:2px 10px;border-radius:999px;background:var(--yel)}
+.ws-more{display:flex;justify-content:center;padding:36px 0 12px}
+.ws-more button{height:48px;padding:0 28px;border-radius:999px;font-size:15px;font-weight:700;box-shadow:inset 0 0 0 1.5px var(--ink)}
+.ws-more button:hover{background:var(--ink);color:#fff}
+/* 作品の例：名前の前に「例」の印 */
+.ws-ex-tag{display:inline-block;font-style:normal;font-size:12px;font-weight:700;line-height:1;padding:5px 9px;border-radius:999px;background:#14162B;color:#fff;margin-right:8px;vertical-align:2px}
+.ws-ex-tool{color:var(--mute)}
+.ws-tile.ws-wait{cursor:default}
+.ws-tile.ws-wait .osc-gh{border-radius:14px}
+
+/* これから並ぶ場所：点線の枠を並べて、まん中にひとこと */
+.ws-soon{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;padding:10px 0 4px}
+.ws-soon i{aspect-ratio:4/3;border-radius:14px;border:1.5px dashed var(--gh-line);background:var(--gh-bg)}
+.ws-soon p{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--paper);border-radius:999px;padding:10px 24px;font-size:15.5px;font-weight:700;white-space:nowrap;box-shadow:0 0 0 1px var(--line)}
+
+.ws-term{padding-top:40px}
+
+@media (max-width:1100px){
+  .ws-hero{grid-template-columns:minmax(0,1fr) 360px;gap:36px}
+  .ws-wall,.ws-soon{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ws-soon i:nth-child(n+4){display:none}
+}
+@media (max-width:860px){
+  body[data-view="works"]{background-size:100% 620px;background-image:linear-gradient(rgba(245,243,244,0) 62%,#F5F3F4),
+    radial-gradient(300px 260px at 100% 0%,#CFF0DF 0,rgba(207,240,223,0) 72%),
+    radial-gradient(320px 300px at 0% 62%,#E6D6F4 0,rgba(230,214,244,0) 72%),
+    radial-gradient(240px 200px at 80% 46%,#F5F1BE 0,rgba(245,241,190,0) 72%)}
+  .ws-wrap{padding:0 16px}
+  .ws-hero{display:block;padding:12px 0 20px}
+  .ws-h1{line-height:1.34}
+  .ws-lead{font-size:14px;line-height:1.7;margin-top:8px}
+  /* 次回のカードは1行にまとめる：左に内容、右に申し込みのボタン（なければ矢印） */
+  .ws-nx{margin:16px 12px 12px 0}
+  .ws-nx::before{transform:translate(12px,12px);border-radius:18px}
+  .ws-nx::after{transform:translate(6px,6px);border-radius:18px}
+  .ws-nx-in{border-radius:18px;padding:11px 14px 12px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:12px}
+  .ws-nx-lbl{font-size:12px}
+  .ws-nx-when b{font-size:24px}
+  .ws-nx-when b.ws-nx-tx{font-size:21px}
+  .ws-nx-when span{font-size:14px}
+  .ws-nx-main > .ws-nx-when{margin-top:0;gap:0 6px}
+  .ws-nx-when i{font-size:14px;margin-left:0}
+  .ws-nx-main > .ws-nx-ttl{font-size:13px;line-height:1.45;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ws-nx-main > .ws-nx-meta,.ws-nx-soon{display:none}
+  .ws-nx-foot,.ws-nx-soon + .ws-nx-foot{margin:0}
+  .ws-nx-btn{height:40px;padding:0 16px;font-size:13.5px}
+  .ws-nx-btn .ws-l{display:none}
+  .ws-nx-btn .ws-s{display:inline}
+  .ws-nx-more{width:38px;height:38px;border-radius:50%;justify-content:center;padding:0;background:rgba(255,255,255,.6)}
+  .ws-nx-more span{display:none}
+  .ws-nx-more svg{width:15px;height:15px}
+  .ws-nx-btn + .ws-nx-more{display:none}
+}
+@media (max-width:720px){
+  /* 絞り込みは1行にして、横にスクロールできるようにする。「つくった回」を先頭に */
+  .ws-flt{margin:0 -16px;padding:12px 16px 10px;overflow-x:auto;scrollbar-width:none;border-top:0}
+  .ws-flt::-webkit-scrollbar{display:none}
+  .ws-chips{flex-wrap:nowrap}
+  .ws-sel{order:0;margin-left:0}
+  .ws-sel span{display:none}
+  .ws-chip,.ws-sel select{height:36px;font-size:13.5px}
+}
+@media (max-width:720px),(hover:none) and (pointer:coarse){
+  .ws-sel select{font-size:16px}   /* iPhoneは、16pxより小さい入力欄を押すと画面を拡大するため（横向きのときも） */
+}
+@media (max-width:720px){
+  .ws-grp{font-size:15.5px;padding:16px 0 4px;gap:0 10px}
+  .ws-grp small{font-size:12px}
+  .ws-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 12px;padding-top:6px}
+  .ws-tile .th{--th-r:12px}
+  .ws-tt{font-size:14px;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ws-ds,.ws-af,.ws-tg{display:none}
+  .ws-ex-tag{font-size:11px;padding:4px 7px;margin-right:6px;vertical-align:1px}
+  .ws-by{margin-top:5px;font-size:12px}
+  .ws-by .osc-mono{width:20px;height:20px;font-size:10px}
+  .ws-tile.ws-wait .osc-gh{border-radius:12px}
+  .ws-tile.ws-big{grid-row:auto}
+  .ws-tile.ws-big .th{flex:none;aspect-ratio:16/10;--th-r:14px}
+  .ws-tile.ws-big .ws-tt{font-size:19px;margin-top:6px}
+  .ws-tile.ws-big .ws-ds{display:-webkit-box;font-size:13.5px}
+  .ws-tile.ws-big .ws-af,.ws-tile.ws-big .ws-tg{display:inline}
+  .ws-tile.ws-big .ws-by{font-size:12.5px;margin-top:8px}
+  .ws-pk{margin-top:12px}
+  .ws-more{padding:26px 0 8px}
+  .ws-soon{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .ws-soon i:nth-child(n+3){display:none}
+  .ws-soon i{border-radius:12px}
+  .ws-soon p{font-size:13.5px;padding:8px 16px}
+  .ws-term{padding-top:30px}
+}
