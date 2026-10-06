@@ -380,8 +380,16 @@ window.SITE_I18N.en = {
     'For questions, email us at the address above. You’re also welcome to come talk to us at an event.',
   '工学部・2年':
     'Faculty of Engineering, 2nd year',
-  'プログラミングは未経験でしたが、AIに相談しながら、ほしかったアプリを自分でつくれるようになりました。単語帳や献立のアプリを、自分と友達で使っています。':
-    'I’d never coded before, but by talking things through with AI, I learned to build the apps I wanted. My friends and I use the flashcard and meal-planning apps I made.',
+  '筋トレと料理が好きです。駒場の近くに住んでいるので、筋トレが好きな人は、ぜひ一緒にトレーニングしましょう。':
+    'I like working out and cooking. I live near Komaba, so if you’re into the gym, let’s train together.',
+  'まえたけにし ときはる':
+    'Maetakenishi Tokiharu',
+  '理科一類・1年':
+    'Natural Sciences I, 1st year',
+  'ピアノと運動が好きです。下北沢に住んでいます。':
+    'I like piano and sports. I live in Shimokitazawa.',
+  'ほしいと思ったプロダクトをすぐにつくらせて、そのつど改良していくこと。英会話の先生になってもらうこと。':
+    'Having it build a product I want right away, then improving it as I go. And having it be my English conversation teacher.',
   'ほしいものを言葉で伝えて、その場で動くものにすること。':
     'Saying what I want in plain words and turning it into something that works, right then and there.',
 
