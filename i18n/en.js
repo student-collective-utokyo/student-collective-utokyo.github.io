@@ -390,8 +390,8 @@ window.SITE_I18N.en = {
     'I like piano and sports. I live in Shimokitazawa.',
   'ほしいと思ったプロダクトをすぐにつくらせて、そのつど改良していくこと。英会話の先生になってもらうこと。':
     'Having it build a product I want right away, then improving it as I go. And having it be my English conversation teacher.',
-  'ほしいものを言葉で伝えて、その場で動くものにすること。':
-    'Saying what I want in plain words and turning it into something that works, right then and there.',
+  'ほしいものを言葉で伝えて、その場で動くものにすること。ちなみに、このサイトもAIと一緒につくりました（笑）':
+    'Saying what I want in plain words and turning it into something that works, right then and there. By the way, I built this site together with AI, too.',
 
   // ── 「はじめての方へ」のページ（content.js の 8） ──
   'ほしいものは、':

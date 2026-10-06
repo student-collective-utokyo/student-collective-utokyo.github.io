@@ -102,9 +102,11 @@
     return '<div class="th th-' + w.look + '" style="--bg:' + p[0] + ';--ink:' + p[1] + ';--ac:' + p[2] + ';--soft:' + p[3] + '"><div class="th-bar"><i></i><i></i><i></i><span></span></div><div class="th-body">' + TPL[w.look](w) + '</div></div>';
   }
 
-  // 名前の最初の1文字を入れた丸
+  // 人の小さな丸。運営メンバーで写真があるときは写真を、ないときは名前の最初の1文字を入れる
   var MONO = ['#E3DAF6', '#D5F0DF', '#F3EFB5', '#D6E9FD', '#FBD9E1', '#FCE6CF'];
   function mono(name) {
+    var who = ((Site.M && Site.M.members) || []).filter(function (m) { return m.name === name && m.image; })[0];
+    if (who) return '<img class="osc-mono" src="' + esc(who.image) + '" alt="">';
     var first = Array.from(name)[0] || '';   // 「𠮷」のような字も1文字として取り出す
     return '<span class="osc-mono" style="background:' + MONO[(name.charCodeAt(0) || 0) % MONO.length] + '">' + esc(first) + '</span>';
   }
