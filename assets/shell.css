@@ -45,6 +45,20 @@ body.osc-stuck .osc-head{background-color:rgba(247,246,243,.84);-webkit-backdrop
 .osc-nav > *{position:relative;display:inline-flex;align-items:center;height:38px;padding:0 14px;border-radius:999px;font-size:14.5px;font-weight:600;white-space:nowrap;opacity:.8}
 .osc-nav > *:hover{opacity:1;background:color-mix(in srgb,currentColor 10%,transparent)}
 .osc-nav > .on{opacity:1}
+/* ── ことばの切りかえ。メニューの右に置く小さなボタン。押すと下に3つのことばが出る ── */
+.osc-nav{margin-left:auto}
+.osc-lang{order:1;position:relative;flex:none;font-size:13px;font-weight:600}
+.osc-lang summary{list-style:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 9px;border-radius:999px;cursor:pointer;white-space:nowrap;opacity:.8;-webkit-user-select:none;user-select:none}
+.osc-lang summary::-webkit-details-marker{display:none}
+.osc-lang summary:hover,.osc-lang[open] summary{opacity:1;background:color-mix(in srgb,currentColor 10%,transparent)}
+.osc-lang summary:focus-visible{outline:2px solid currentColor;outline-offset:2px;box-shadow:none;opacity:1}
+.osc-lang summary svg{width:15px;height:15px;flex:none}
+.osc-lang-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:70;display:grid;gap:2px;min-width:136px;padding:6px;border-radius:14px;background:#fff;color:#14162B;box-shadow:0 10px 30px rgba(20,22,43,.18),0 0 0 1px rgba(20,22,43,.08)}
+.osc-lang-menu a{display:flex;align-items:center;height:38px;padding:0 12px;border-radius:9px;font-size:14.5px;font-weight:600;white-space:nowrap}
+.osc-lang-menu a:hover{background:rgba(20,22,43,.06)}
+.osc-lang-menu a.on{background:rgba(20,22,43,.08)}
+/* 日本語以外のページに出す注意書き（イベントは日本語で行うこと） */
+.osc-langnote{font-size:14px;line-height:1.6;font-weight:600;margin-top:12px;opacity:.92}
 .osc-nav > *:focus-visible{outline:2px solid currentColor;outline-offset:-3px;box-shadow:none;opacity:1}   /* メニューは横にスクロールする枠の中にあり、外側の線は上下が切れるので、内側に引く */
 .osc-nav > .on::after{content:"";position:absolute;left:14px;right:14px;bottom:3px;height:2px;border-radius:2px;background:currentColor}
 @media (max-width:1100px){
@@ -52,6 +66,12 @@ body.osc-stuck .osc-head{background-color:rgba(247,246,243,.84);-webkit-backdrop
   .osc-brand{position:relative;z-index:2;padding:14px var(--osc-gut) 0;color:var(--hd-fg,#14162B)}
   .osc-nav{position:sticky;top:var(--osc-top);z-index:50;height:46px;gap:0;padding:0 calc(var(--osc-gut) - 10px);overflow-x:auto;scrollbar-width:none;color:var(--hd-fg,#14162B);transition:background-color .2s,color .2s,box-shadow .2s}
   .osc-nav::-webkit-scrollbar{display:none}
+  .osc-nav{margin-left:0}
+  /* せまい幅では、サイト名の行の右下（「東京大学 学生運営」の行の右はし）に重ねて置く */
+  /* 高さを決めて、同じだけ上にずらす（下に続くメニューの位置が、このボタンのせいで動かないように） */
+  .osc-lang{display:block;width:max-content;height:27px;margin:-27px var(--osc-gut) 0 auto;z-index:55;color:var(--hd-fg,#14162B)}
+  .osc-brand{padding-right:calc(var(--osc-gut) + 66px)}   /* 右はしに切りかえのボタンが重なるので、その分をあけておく（入りきらない札は次の行に回る） */
+  .osc-lang summary{display:flex;height:26px;padding:0 8px;font-size:12.5px}
   .osc-nav > *{flex:none;height:46px;padding:0 10px;border-radius:0;font-size:14px}
   .osc-nav > *:hover{background:none}
   .osc-nav > .on::after{left:10px;right:10px;bottom:7px}
@@ -69,10 +89,12 @@ body.osc-stuck .osc-head{background-color:rgba(247,246,243,.84);-webkit-backdrop
   .osc-chips em{font-size:11px;padding:4px 8px}
 }
 @media (max-width:480px){   /* スマホの幅では、マークを左に置いて、右に名前と「学生運営」を2行で並べる */
-  .osc-brand{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px 10px}
+  .osc-brand{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:4px 10px;padding-right:var(--osc-gut)}   /* スマホの幅では、ボタンは2行目の右のあいた所に入るので、あけなくてよい */
   .osc-mark{grid-row:1 / span 2;width:66px;height:66px;margin:-10px -16px}
   .osc-name{grid-column:2;flex-wrap:wrap;gap:0 6px}
   .osc-chips{grid-column:2}
+  .osc-lang{height:23px;margin-top:-23px}
+  .osc-lang summary{height:22px}
 }
 @media (max-width:480px){   /* スマホの幅では、5つを左右いっぱいに並べる */
   .osc-nav{justify-content:space-between;padding:0 10px}

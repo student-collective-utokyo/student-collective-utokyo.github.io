@@ -5,8 +5,38 @@
 
   var demo = /[?&]demo(=|&|$)/.test(location.search);    // ?demo ＝ サンプルデータで表示
   var check = /[?&]check(=|&|$)/.test(location.search);  // ?check ＝ 書き方のチェックを表示
-  var DOW = ['日', '月', '火', '水', '木', '金', '土'];
-  var KIND = { workshop: 'ワークショップ', showcase: 'ショーケース' };
+  /* ── ことば（日本語・中国語・英語） ──
+     もとの文は日本語です。中国語と英語は、i18n/zh.js と i18n/en.js に「日本語の文 → 訳した文」の形で書いてあります。
+     訳がまだない文は、日本語のまま出ます。
+     どのことばで出すかは、アドレスの ?lang=zh / ?lang=en / ?lang=ja で決まります。一度選ぶと、そのブラウザでは次からも同じことばで出ます。 */
+  var LANGS = ['ja', 'zh', 'en'];
+  var lang = (function () {
+    var m = /[?&]lang=([a-z]+)/i.exec(location.search), v = m ? m[1].toLowerCase() : '', saved = '';
+    try { saved = localStorage.getItem('osc-lang') || ''; } catch (e) {}
+    if (LANGS.indexOf(v) < 0) v = LANGS.indexOf(saved) >= 0 ? saved : 'ja';
+    try { if (m) localStorage.setItem('osc-lang', v); } catch (e) {}
+    return v;
+  })();
+  var dict = {}, missing = [];
+  // 文を、いまのことばに直す。{n} のような場所には、vars の値を入れる
+  function t(s, vars) {
+    var out = s;
+    if (lang !== 'ja' && s) {
+      if (Object.prototype.hasOwnProperty.call(dict, s)) out = dict[s];
+      else if (/[ぁ-んァ-ヶ一-龠]/.test(s) && missing.indexOf(s) < 0) missing.push(s);
+    }
+    if (vars) out = out.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; });
+    return out;
+  }
+  // 曜日。訳のファイルを読めなかったときは途中で日本語に戻すので、使うたびにいまのことばで選ぶ
+  var DOWS = { ja: ['日', '月', '火', '水', '木', '金', '土'], zh: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'], en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] };
+  function dowOf(i) { return DOWS[lang][i]; }
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // 日付の長い書き方。日本語：10月22日(木)　中国語：10月22日（周四）　英語：Thu, Oct 22
+  function longDate(mo, d, dow) {
+    return lang === 'en' ? dow + ', ' + MONTHS[mo - 1] + ' ' + d : lang === 'zh' ? mo + '月' + d + '日（' + dow + '）' : mo + '月' + d + '日(' + dow + ')';
+  }
+  var KIND = { workshop: 'ワークショップ', showcase: 'ショーケース' };   // 画面に出すときに t() を通す
   var LOOKS = ['site', 'map', 'dash', 'game', 'cal', 'asst', 'res'];
   var LOOK_BY_CATEGORY = { 'ウェブサイト': 'site', 'ダッシュボード': 'dash', 'リサーチ': 'res', 'アシスタント': 'asst', 'ゲーム': 'game', 'カレンダー': 'cal', '地図': 'map' };
   var issues = [];
@@ -17,6 +47,8 @@
     });
   }
   function str(v) { return v == null ? '' : String(v).trim(); }
+  // 画面に出す文章の項目は、これで読む（いまのことばに直す）。名前・日付・アドレスなどは str のまま読む
+  function tx(v) { return t(str(v)); }
   function list(v) { return Array.isArray(v) ? v.filter(function (x) { return x != null; }) : []; }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973; return h; }
@@ -26,16 +58,16 @@
     var s = str(v);
     if (!s) return null;
     var m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);
-    var t = m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null;
-    if (!t || t.getUTCMonth() !== +m[2] - 1 || t.getUTCDate() !== +m[3]) {
+    var day = m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null;
+    if (!day || day.getUTCMonth() !== +m[2] - 1 || day.getUTCDate() !== +m[3]) {
       issues.push(where + '：日付「' + s + '」を読めませんでした。\'2026-10-22\' の形で書いてください。いまは「日程調整中」として表示しています。');
       return null;
     }
     return {
-      y: +m[1], m: +m[2], d: +m[3], dow: DOW[t.getUTCDay()],
+      y: +m[1], m: +m[2], d: +m[3], dow: dowOf(day.getUTCDay()),
       key: m[1] + pad(+m[2]) + pad(+m[3]),
       md: +m[2] + '.' + pad(+m[3]),
-      long: +m[2] + '月' + +m[3] + '日(' + DOW[t.getUTCDay()] + ')'
+      long: longDate(+m[2], +m[3], dowOf(day.getUTCDay()))
     };
   }
   // '18:45' を時刻の部品に分ける
@@ -127,12 +159,13 @@
       if (e.kind && !KIND[e.kind]) issues.push(where + '：kind「' + str(e.kind) + '」は使えません。\'workshop\' か \'showcase\' を書いてください。');
       var kind = KIND[e.kind] ? e.kind : 'workshop';
       return {
-        id: id, kind: kind, kindLabel: KIND[kind], name: str(e.name), short: str(e.short),
-        date: date, when: str(e.when), start: start, end: end,
-        timeText: start ? (end ? start.text + '–' + end.text : start.text + 'から') : '',
-        title: str(e.title), bigTitle: list(e.bigTitle).map(str).filter(Boolean), sub: str(e.sub),
-        place: str(e.place), placeNote: str(e.placeNote), tool: str(e.tool), toolNote: str(e.toolNote),
-        bring: str(e.bring), bringNote: str(e.bringNote), fee: str(e.fee), feeNote: str(e.feeNote),
+        id: id, kind: kind, kindLabel: t(KIND[kind]), name: tx(e.name), short: tx(e.short),
+        no: (/^第(\d+)回$/.exec(str(e.short)) || [])[1] || '',   // 「第1回」の 1。大きく出すときに使う
+        date: date, when: tx(e.when), start: start, end: end,
+        timeText: start ? (end ? start.text + '–' + end.text : t('{t}から', { t: start.text })) : '',
+        title: tx(e.title), bigTitle: list(e.bigTitle).map(tx).filter(Boolean), sub: tx(e.sub),
+        place: tx(e.place), placeNote: tx(e.placeNote), tool: str(e.tool), toolNote: tx(e.toolNote),
+        bring: tx(e.bring), bringNote: tx(e.bringNote), fee: tx(e.fee), feeNote: tx(e.feeNote),
         applyUrl: sample ? '' : link(e.applyUrl, where), people: str(e.people).replace(/[人名]$/, ''),   // うしろに「人」をつけて出すので、'34人' と書いてあっても「34人人」にならないようにする
         done: !!date && date.key < today
       };
@@ -152,28 +185,28 @@
     list(src.works).forEach(function (w, i) {
       var where = 'works の' + (i + 1) + '番目（' + (str(w.title) || str(w.maker)) + '）';
       known(w, KEYS.work, where); need(w.maker, where, 'maker');
-      if (w.comingSoon) { pending.push({ maker: str(w.maker), makerNote: str(w.makerNote) }); return; }
+      if (w.comingSoon) { pending.push({ maker: str(w.maker), makerNote: tx(w.makerNote) }); return; }
       need(w.title, where, 'title');
       if (w.id != null) { if (workIds[w.id]) issues.push(where + '：id「' + w.id + '」がほかの作品と重なっています。'); workIds[w.id] = true; }
       var from = str(w.from) || 'lead', ev = byId[from], date = parseDate(w.date, where);
       var fromLabel = '', fromShort = '';
       if (from === 'lead') { /* 下でまとめて決める */ }
-      else if (from === 'studio') { fromLabel = 'Studio Hours' + (date ? ' ・ ' + date.long : ''); fromShort = 'Studio Hours'; }
-      else if (ev) { fromLabel = ev.name + (ev.date ? ' ・ ' + ev.date.long : ''); fromShort = ev.short || ev.name; }
+      else if (from === 'studio') { fromLabel = 'Studio Hours' + (date ? t(' ・ ') + date.long : ''); fromShort = 'Studio Hours'; }
+      else if (ev) { fromLabel = ev.name + (ev.date ? t(' ・ ') + ev.date.long : ''); fromShort = ev.short || ev.name; }
       else {
         // from の書きまちがい。イベントの作品として数えると、ページ全体が「作品がある」表示に変わってしまうので、運営メンバーの作品として扱う
         issues.push(where + '：from「' + from + '」と同じ id の回が events にありません。いまは運営メンバーの作品として表示しています。');
         from = 'lead';
       }
       if (from === 'lead') {
-        fromLabel = '運営メンバーの作品'; fromShort = '運営メンバー';
+        fromLabel = t('運営メンバーの作品'); fromShort = t('運営メンバー');
         if (!sample && str(w.maker) && memberNames.indexOf(str(w.maker)) < 0) issues.push(where + '：maker「' + str(w.maker) + '」と同じ名前の人が members にいません（空白のちがいにも注意してください）。「運営メンバー」のページの「つくったもの」に出ません。');
       }
       var title = str(w.title), category = str(w.category);
       works.push({
         id: String(w.id != null ? w.id : 'n' + (i + 1)), seed: typeof w.id === 'number' ? w.id : i + 1,
-        title: title, about: str(w.about), maker: str(w.maker), makerNote: str(w.makerNote),
-        from: from, fromLabel: fromLabel, fromShort: fromShort, tool: str(w.tool), category: category,
+        title: t(title), about: tx(w.about), maker: str(w.maker), makerNote: tx(w.makerNote),
+        from: from, fromLabel: fromLabel, fromShort: fromShort, tool: str(w.tool), category: category,   // category は絞り込みの目印なので日本語のまま持つ。画面に出すときに t() を通す
         image: str(w.image), url: sample ? '' : link(w.url, where), pick: !!w.pick,
         look: LOOKS.indexOf(w.look) >= 0 ? w.look : LOOK_BY_CATEGORY[category] || 'site',
         color: colorOf(w.color, title, where),
@@ -186,7 +219,7 @@
       var title = str(w.title), category = str(w.category), where = 'examples の' + (i + 1) + '番目（' + title + '）';
       known(w, KEYS.example, where); need(title, where, 'title');
       return {
-        id: 'ex' + (i + 1), seed: i + 1, title: title, about: str(w.about), tool: str(w.tool), category: category, image: str(w.image),
+        id: 'ex' + (i + 1), seed: i + 1, title: t(title), about: tx(w.about), tool: str(w.tool), category: category, image: str(w.image),
         look: LOOKS.indexOf(w.look) >= 0 ? w.look : LOOK_BY_CATEGORY[category] || 'site',
         color: colorOf(w.color, title, where), num: Array.isArray(w.num) ? w.num.map(str) : null
       };
@@ -199,7 +232,7 @@
       known(r, KEYS.record, where); need(r.title, where, 'title');
       // focus（写真のどこを中心に見せるか）は '50% 30%' の形だけを通す
       if (focus && !/^\d{1,3}% \d{1,3}%$/.test(focus)) { issues.push(where + '：focus「' + focus + '」は \'50% 30%\' の形で書いてください。いまは写真のまんなかを表示しています。'); focus = ''; }
-      return { date: parseDate(r.date, where), label: str(r.label), title: str(r.title), image: str(r.image), focus: focus || '50% 50%', n: i };
+      return { date: parseDate(r.date, where), label: tx(r.label), title: tx(r.title), image: str(r.image), focus: focus || '50% 50%', n: i };
     });
     // 新しい記録を先に
     records.sort(function (a, b) { return (b.date ? b.date.key : '0').localeCompare(a.date ? a.date.key : '0') || a.n - b.n; });
@@ -212,30 +245,30 @@
     ['catch', 'steps', 'bring', 'faq'].forEach(function (k) { listed((real.studioPage || {})[k], 'studioPage の ' + k); });
     listed((real.membersPage || {}).about, 'membersPage の about');
     var about = {
-      catchLines: list(ab.catch).map(str).filter(Boolean), lead: str(ab.lead),
-      what: list(ab.what).map(str).filter(Boolean), why: list(ab.why).map(str).filter(Boolean),
-      stats: list(ab.stats).map(function (x) { return [str(list(x)[0]), str(list(x)[1])]; }).filter(function (x) { return x[0]; }),
-      quote: str(ab.quote), quoteFrom: str(ab.quoteFrom), officialUrl: link(ab.officialUrl, 'about の officialUrl'),
-      workshop: str(ab.workshop), studio: str(ab.studio), showcase: str(ab.showcase),
-      faq: list(ab.faq).map(function (x) { return { q: str(x.q), a: str(x.a) }; }).filter(function (x) { return x.q && x.a; }),
-      closing: str(ab.closing)
+      catchLines: list(ab.catch).map(tx).filter(Boolean), lead: tx(ab.lead),
+      what: list(ab.what).map(tx).filter(Boolean), why: list(ab.why).map(tx).filter(Boolean),
+      stats: list(ab.stats).map(function (x) { return [tx(list(x)[0]), tx(list(x)[1])]; }).filter(function (x) { return x[0]; }),
+      quote: tx(ab.quote), quoteFrom: tx(ab.quoteFrom), officialUrl: link(tx(ab.officialUrl), 'about の officialUrl'),   // 英語のページでは、訳のファイルに書いた英語の公式ページのアドレスに差しかえる
+      workshop: tx(ab.workshop), studio: tx(ab.studio), showcase: tx(ab.showcase),
+      faq: list(ab.faq).map(function (x) { return { q: tx(x.q), a: tx(x.a) }; }).filter(function (x) { return x.q && x.a; }),
+      closing: tx(ab.closing)
     };
 
     // 「作品」のページのいちばん上の文章。サンプル表示のときも、文章は本物を使う
     var wp = real.worksPage || {};
     var worksPage = {
-      openTitle: list(wp.openTitle).map(str).filter(Boolean), openLead: str(wp.openLead),
-      title: list(wp.title).map(str).filter(Boolean), lead: str(wp.lead)
+      openTitle: list(wp.openTitle).map(tx).filter(Boolean), openLead: tx(wp.openLead),
+      title: list(wp.title).map(tx).filter(Boolean), lead: tx(wp.lead)
     };
 
     // 「Studio Hours」と「運営メンバー」のページの文章。サンプル表示のときも、文章は本物を使う
     var sp = real.studioPage || {}, mp = real.membersPage || {};
-    function pairs(v) { return list(v).map(function (x) { return [str(list(x)[0]), str(list(x)[1])]; }).filter(function (x) { return x[0]; }); }
+    function pairs(v) { return list(v).map(function (x) { return [tx(list(x)[0]), tx(list(x)[1])]; }).filter(function (x) { return x[0]; }); }
     var studioPage = {
-      catchLines: list(sp.catch).map(str).filter(Boolean), steps: pairs(sp.steps), bring: pairs(sp.bring),
-      faq: list(sp.faq).map(function (x) { return { q: str(x.q), a: str(x.a) }; }).filter(function (x) { return x.q && x.a; })
+      catchLines: list(sp.catch).map(tx).filter(Boolean), steps: pairs(sp.steps), bring: pairs(sp.bring),
+      faq: list(sp.faq).map(function (x) { return { q: tx(x.q), a: tx(x.a) }; }).filter(function (x) { return x.q && x.a; })
     };
-    var membersPage = { lead: str(mp.lead), about: list(mp.about).map(str).filter(Boolean), contact: str(mp.contact) };
+    var membersPage = { lead: tx(mp.lead), about: list(mp.about).map(tx).filter(Boolean), contact: tx(mp.contact) };
 
     var home = str(real.home) || 'next';
     // 今学期のワークショップの回数。数字で書いていないときは、チェックに出して events から数える
@@ -244,10 +277,10 @@
     if (home !== 'next' && home !== 'works') { issues.push('home「' + home + '」は使えません。\'next\' か \'works\' を書いてください。'); home = 'next'; }
 
     return {
-      demo: !!sample, home: home,
-      term: { label: str(term.label), workshops: wsCount, note: str(term.note) },
+      demo: !!sample, home: home, lang: lang,
+      term: { label: tx(term.label), workshops: wsCount, note: tx(term.note) },
       events: events, next: next,
-      studio: { when: str(st.when), time: str(st.time), place: str(st.place), note: str(st.note) },
+      studio: { when: tx(st.when), time: tx(st.time), place: tx(st.place), note: tx(st.note) },
       works: works, pending: pending, examples: examples,
       eventWorks: works.filter(function (w) { return w.byEvent; }),
       records: records,
@@ -259,7 +292,7 @@
           issues.push('members の' + (i + 1) + '番目（' + str(m.name) + '）：メールアドレス「' + email + '」を読めませんでした。いまはメールなしで表示しています。');
           email = '';
         }
-        return { name: str(m.name), kana: str(m.kana), role: str(m.role), note: str(m.note), intro: str(m.intro), like: str(m.like), image: str(m.image), email: email };
+        return { name: str(m.name), kana: tx(m.kana), role: str(m.role), note: tx(m.note), intro: tx(m.intro), like: tx(m.like), image: str(m.image), email: email };
       }),
       about: about, worksPage: worksPage, studioPage: studioPage, membersPage: membersPage
     };
@@ -283,12 +316,23 @@
     var box = document.createElement('div');
     box.className = 'osc-check';
     var file = Site.M && Site.M.demo ? 'サンプル表示（sample/sample-content.js と content.js）' : 'content.js';
+    var main = document.createElement('div');
+    box.appendChild(main);
     function draw() {
-      box.innerHTML = issues.length
+      main.innerHTML = issues.length
         ? '<b>' + file + 'のチェック：気になる点が' + issues.length + '件あります。</b><ul>' + issues.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>'
         : '<b>' + file + 'のチェック：気になる点は見つかりませんでした。</b>';
     }
     draw();
+    // 日本語以外のときは、訳がまだない文も並べる（その文は日本語のまま出ている）
+    var errs = (window.__siteErrors || []).map(function (e) { return (e.file ? e.file.split('/').pop() + 'の' + e.line + '行目あたり：' : '') + e.msg; });
+    if (errs.length) { var er = document.createElement('div'); er.innerHTML = '<b style="display:block;margin-top:8px">読みこみのときのエラー</b><ul>' + errs.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>'; box.appendChild(er); }
+    if (lang !== 'ja' && Site.M && !Site.M.demo) {
+      var note = document.createElement('div');
+      note.innerHTML = '<b style="display:block;margin-top:8px">i18n/' + lang + '.js：訳がまだない文が' + missing.length + '件あります。</b>' +
+        (missing.length ? '<ul>' + missing.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join('') + '</ul>' : '');
+      box.appendChild(note);
+    }
     document.body.insertBefore(box, document.body.firstChild);
     // 画像のファイルが実際にあるかを確かめる（ファイル名の書きまちがいを見つけるため）
     var M = Site.M, imgs = [];
@@ -302,6 +346,13 @@
     });
   }
 
+  // スクリプトのファイルを読みこむ
+  function script(src, ok, ng) {
+    var s = document.createElement('script');
+    s.src = src; s.onload = ok; s.onerror = ng;
+    document.head.appendChild(s);
+  }
+
   function load(render) {
     var real = window.SITE_CONTENT;
     if (!real || typeof real !== 'object') return fail('content');
@@ -312,21 +363,39 @@
       try { render(M); } catch (e) { return fail(sample ? 'sample' : 'content', e); }
       if (check) showCheck();
     }
-    if (!demo) return go(null);
-    // サンプル表示は、検索に出ないようにする
-    var robots = document.createElement('meta');
-    robots.name = 'robots'; robots.content = 'noindex';
-    document.head.appendChild(robots);
-    // サンプルデータは ?demo のときだけ読みこむ
-    var s = document.createElement('script');
-    s.src = 'sample/sample-content.js';
-    s.onload = function () { if (window.SITE_SAMPLE) go(window.SITE_SAMPLE); else fail('sample'); };
-    s.onerror = function () { fail('sample'); };
-    document.head.appendChild(s);
+    function start() {
+      if (!demo) return go(null);
+      // サンプル表示は、検索に出ないようにする
+      var robots = document.createElement('meta');
+      robots.name = 'robots'; robots.content = 'noindex';
+      document.head.appendChild(robots);
+      // サンプルデータは ?demo のときだけ読みこむ
+      script('sample/sample-content.js', function () { if (window.SITE_SAMPLE) go(window.SITE_SAMPLE); else fail('sample'); }, function () { fail('sample'); });
+    }
+    if (lang === 'ja') { document.body.setAttribute('data-lang', 'ja'); return start(); }
+    /* 日本語以外のときは、訳のファイルを読みこんでから組み立てる。
+       読みこめなかったとき、書き方のまちがいで中身が空のときは、ページ全体を日本語に戻して出す（選んだことばの記憶はそのまま）。 */
+    function ready() {
+      var d = (window.SITE_I18N || {})[lang];
+      if (d && Object.keys(d).length) { dict = d; document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang; }
+      else { issues.push('i18n/' + lang + '.js を読みこめませんでした（ファイルがないか、書き方にまちがいがあります）。日本語で表示しています。'); lang = Site.lang = 'ja'; }
+      document.body.setAttribute('data-lang', lang);
+      start();
+    }
+    script('i18n/' + lang + '.js', ready, ready);
   }
 
-  // ほかのページへのリンク。?demo のときは ?demo をつけたまま移動する。hash はページの中の場所（'do' など）
-  function href(file, hash) { return file + (demo ? '?demo' : '') + (hash ? '#' + hash : ''); }
+  /* ほかのページへのリンク。?demo のときは ?demo を、日本語以外のときは ?lang=… をつけたまま移動する。
+     hash はページの中の場所（'do' など） */
+  function query(l) { return [demo ? 'demo' : '', l !== 'ja' ? 'lang=' + l : ''].filter(Boolean).join('&'); }
+  function href(file, hash) { var q = query(lang); return file + (q ? '?' + q : '') + (hash ? '#' + hash : ''); }
+  // いま開いているページを、別のことばで開きなおすためのアドレス。日本語に戻すときも ?lang=ja をつける（選んだことばをおぼえなおすため）
+  function langHref(l) {
+    var file = location.pathname.split('/').pop() || 'index.html';
+    return file + '?' + [demo ? 'demo' : '', 'lang=' + l].filter(Boolean).join('&') + location.hash;
+  }
 
-  var Site = window.Site = { demo: demo, esc: esc, load: load, href: href, views: {}, M: null };
+  // 訳してから、HTMLに入れても安全な形にする（ふつうの文はこれを使う。タグを含む文だけ t を使う）
+  function T(s, vars) { return esc(t(s, vars)); }
+  var Site = window.Site = { demo: demo, lang: lang, langs: LANGS, t: t, T: T, missing: missing, esc: esc, load: load, href: href, langHref: langHref, views: {}, M: null };
 })();

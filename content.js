@@ -186,7 +186,7 @@ window.SITE_CONTENT = {
     ],
     quote: '目標は、AIに関心を持つ誰もが、仲間とともに学び、試し、ものづくりに取り組める場をつくることです。',   // OpenAIの公式ページからの引用。書きかえないでください
     quoteFrom: 'OpenAIの公式ページより',
-    officialUrl: 'https://openai.com/ja-JP/student-collective/',
+    officialUrl: 'https://openai.com/ja-JP/student-collective/',   // 英語のページでは英語の公式ページを開きます。ここを書きかえたら、i18n/en.js の左側も同じに書きかえてください
 
     // 02 なぜ「つくる」のか
     why: [

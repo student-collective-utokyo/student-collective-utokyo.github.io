@@ -1,7 +1,7 @@
 /* 全ページ共通の小さな部品：お知らせの帯、重ねて出すパネル、作品の絵、作品のくわしい表示、ページ内の移動。 */
 (function () {
   'use strict';
-  var Site = window.Site, esc = Site.esc;
+  var Site = window.Site, esc = Site.esc, t = Site.t, T = Site.T;
 
   // ── お知らせの帯（画面の下に少しのあいだ出る） ──
   var toastEl, toastTimer;
@@ -15,7 +15,8 @@
 
   // ── 重ねて出すパネル ──
   var scrim, sheet, lastFocus;
-  var X = '<button class="osc-x" data-close aria-label="閉じる"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg></button>';
+  // 閉じるボタン。訳のファイルを読みこんだあとで作るので、使うときに組み立てる
+  function X() { return '<button class="osc-x" data-close aria-label="' + T('閉じる') + '"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l10 10M13 3L3 13"/></svg></button>'; }
   function openSheet(html, label) {
     if (!scrim) {
       scrim = document.createElement('div'); scrim.className = 'osc-scrim';
@@ -33,8 +34,8 @@
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       });
     }
-    sheet.setAttribute('aria-label', label || 'くわしい表示');
-    sheet.innerHTML = X + html;
+    sheet.setAttribute('aria-label', label || t('くわしい表示'));
+    sheet.innerHTML = X() + html;
     phrase(sheet);
     sheet.scrollTop = 0;
     // 開く前にいた場所をおぼえておき、閉じたらそこへ戻す
@@ -76,14 +77,14 @@
     },
     dash: function (w) {
       var r = rnd(w.seed), n = w.num || [(40 + r() * 50).toFixed(1), '%'], hi = Math.floor(r() * 8);
-      return '<div class="th-t sm">' + esc(w.title) + '</div><div class="d-num">' + esc(n[0]) + '<small>' + esc(n[1]) + '</small></div><div class="d-bars">' + rep(9, function (i) { return '<i' + (i === hi || i === 8 ? ' class="on"' : '') + ' style="height:' + (22 + r() * 76).toFixed(0) + '%"></i>'; }) + '</div>';
+      return '<div class="th-t sm">' + esc(w.title) + '</div><div class="d-num">' + esc(n[0]) + '<small>' + T(n[1]) + '</small></div><div class="d-bars">' + rep(9, function (i) { return '<i' + (i === hi || i === 8 ? ' class="on"' : '') + ' style="height:' + (22 + r() * 76).toFixed(0) + '%"></i>'; }) + '</div>';
     },
     game: function (w) {
       var r = rnd(w.seed);
       return '<div class="g-top"><div class="th-t sm">' + esc(w.title) + '</div><div class="g-score"><b>' + (8 + Math.floor(r() * 9)) + '</b><span>:</span><b>' + (3 + Math.floor(r() * 9)) + '</b></div></div><div class="g-grid">' + rep(12, function () { var v = r(); return '<i' + (v > .72 ? ' class="a"' : v > .42 ? ' class="b"' : '') + '></i>'; }) + '</div><div class="g-timer"><i style="width:' + (35 + r() * 50).toFixed(0) + '%"></i></div>';
     },
     cal: function (w) {
-      var r = rnd(w.seed), days = ['月', '火', '水', '木', '金'];
+      var r = rnd(w.seed), days = t('月火水木金').split('');
       return '<div class="th-t sm">' + esc(w.title) + '</div><div class="c-grid">' + days.map(function (d) {
         return '<div class="c-col"><em>' + d + '</em>' + rep(4, function () { var v = r(); return '<i class="' + (v > .7 ? 'on' : v > .34 ? '' : 'gap') + '" style="flex:' + (1 + Math.floor(r() * 3)) + '"></i>'; }) + '</div>';
       }).join('') + '</div>';
@@ -113,13 +114,13 @@
     var M = Site.M, w = M.works.filter(function (x) { return x.id === String(id); })[0];
     if (!w) return;
     var acts = '';
-    if (M.demo) acts += '<button class="osc-wk-go" data-toast="サンプルのため、作品のリンクはありません。">作品を開く</button>';
-    else if (w.url) acts += '<a class="osc-wk-go" href="' + esc(w.url) + '" target="_blank" rel="noopener">作品を開く</a>';
-    if (w.byEvent && M.records.length) acts += Site.shell.go('records', 'osc-wk-sub', '活動記録を見る');
+    if (M.demo) acts += '<button class="osc-wk-go" data-toast="' + T('サンプルのため、作品のリンクはありません。') + '">' + T('作品を開く') + '</button>';
+    else if (w.url) acts += '<a class="osc-wk-go" href="' + esc(w.url) + '" target="_blank" rel="noopener">' + T('作品を開く') + '</a>';
+    if (w.byEvent && M.records.length) acts += Site.shell.go('records', 'osc-wk-sub', T('活動記録を見る'));
     openSheet('<div class="osc-wk">' + thumb(w) + '<h3>' + esc(w.title) + '</h3><p class="osc-wk-desc">' + esc(w.about) + '</p><dl>' +
-      '<dt>つくった人</dt><dd>' + esc(w.maker) + (w.makerNote ? '（' + esc(w.makerNote) + '）' : '') + '</dd>' +
-      (w.byEvent && w.fromLabel ? '<dt>つくった回</dt><dd>' + esc(w.fromLabel) + '</dd>' : '') +
-      (w.tool ? '<dt>使ったもの</dt><dd>' + esc(w.tool) + '</dd>' : '') +
+      '<dt>' + T('つくった人') + '</dt><dd>' + (w.makerNote ? T('{a}（{b}）', { a: w.maker, b: w.makerNote }) : esc(w.maker)) + '</dd>' +
+      (w.byEvent && w.fromLabel ? '<dt>' + T('つくった回') + '</dt><dd>' + esc(w.fromLabel) + '</dd>' : '') +
+      (w.tool ? '<dt>' + T('使ったもの') + '</dt><dd>' + esc(w.tool) + '</dd>' : '') +
       '</dl>' + (acts ? '<div class="osc-wk-acts">' + acts + '</div>' : '') + '</div>', w.title);
   }
 
@@ -127,10 +128,10 @@
   function openExample(id) {
     var w = Site.M.examples.filter(function (x) { return x.id === String(id); })[0];
     if (!w) return;
-    openSheet('<div class="osc-wk">' + thumb(w) + '<p class="osc-wk-note"><b>これは例です。</b>実際の作品ではありません。ワークショップでは、こういうものをつくれます。</p>' +
+    openSheet('<div class="osc-wk">' + thumb(w) + '<p class="osc-wk-note"><b>' + T('これは例です。') + '</b>' + T('実際の作品ではありません。ワークショップでは、こういうものをつくれます。') + '</p>' +
       '<h3>' + esc(w.title) + '</h3><p class="osc-wk-desc">' + esc(w.about) + '</p><dl>' +
-      (w.category ? '<dt>種類</dt><dd>' + esc(w.category) + '</dd>' : '') +
-      (w.tool ? '<dt>使うもの</dt><dd>' + esc(w.tool) + '</dd>' : '') + '</dl></div>', w.title + '（例）');
+      (w.category ? '<dt>' + T('種類') + '</dt><dd>' + T(w.category) + '</dd>' : '') +
+      (w.tool ? '<dt>' + T('使うもの') + '</dt><dd>' + esc(w.tool) + '</dd>' : '') + '</dl></div>', t('{x}（例）', { x: w.title }));
   }
 
   /* 見出しの折り返しの手伝い。
@@ -158,6 +159,13 @@
         t.parentNode.replaceChild(f, t);
       });
     });
+  }
+
+  /* 1行ずつ書いた見出しを並べる。
+     日本語は <br> で区切る。中国語と英語は、1行が長くて折り返すことがあるので、行ごとに箱にして、折り返したときに長さがそろうようにする。 */
+  function lines(list) {
+    if (Site.lang === 'ja') return list.map(esc).join('<br>');
+    return list.map(function (l) { return '<span class="osc-ln">' + esc(l) + '</span>'; }).join('');
   }
 
   var CHEV = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>';
@@ -189,5 +197,5 @@
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
 
-  Site.ui = { toast: toast, openSheet: openSheet, closeSheet: closeSheet, thumb: thumb, mono: mono, openWork: openWork, jumpTo: jumpTo, phrase: phrase, CHEV: CHEV };
+  Site.ui = { toast: toast, openSheet: openSheet, closeSheet: closeSheet, thumb: thumb, mono: mono, openWork: openWork, jumpTo: jumpTo, phrase: phrase, lines: lines, CHEV: CHEV };
 })();

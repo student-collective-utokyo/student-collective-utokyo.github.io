@@ -25,6 +25,7 @@ body[data-view="next"]:not(.osc-stuck) .osc-mark .osc-mark-w{display:block}
 .nx-date b.nx-tx{font-size:96px;line-height:1.25;letter-spacing:0;margin-left:0}
 .nx-side{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-bottom:26px}
 .nx-dow{width:60px;height:60px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-size:27px;font-weight:700}
+html:lang(zh) .nx-dow,html:lang(en) .nx-dow{width:auto;min-width:60px;padding:0 18px;border-radius:999px;font-size:23px}   /* 「周四」「Thu」は1文字ではないので、丸ではなく横長にする */
 .nx-tbd{background:#fff;color:var(--ink);font-size:19px;font-weight:700;border-radius:999px;padding:6px 18px;white-space:nowrap}
 .nx-time{font-size:30px;font-weight:700;letter-spacing:-.005em;line-height:1.2;white-space:nowrap}
 .nx-h1{font-size:41px;line-height:1.42;font-weight:700;margin-top:12px;letter-spacing:.01em}
@@ -44,6 +45,7 @@ body[data-view="next"]:not(.osc-stuck) .osc-mark .osc-mark-w{display:block}
 .nx-board h2 small{font-size:12.5px;font-weight:500;color:var(--mute)}
 .nx-row{display:grid;grid-template-columns:86px 1fr auto;align-items:center;gap:8px;width:100%;padding:11px 16px;border-radius:12px;border-top:1px solid var(--line)}
 .nx-board h2 + .nx-row{border-top:0}
+html:lang(zh) .nx-row,html:lang(en) .nx-row{grid-template-columns:104px 1fr auto}   /* 「10.22 周四」「By Dec」は日本語より長いので、日付の列を広くする */
 .nx-d{font-size:21px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
 .nx-d small{font-size:12.5px;font-weight:600;margin-left:5px;color:var(--mute)}
 .nx-d.nx-tx{font-size:14.5px;letter-spacing:0;line-height:1.4}
@@ -109,6 +111,7 @@ button.nx-row:hover,a.nx-row:hover{background:rgba(20,22,43,.05)}
   .nx-side{gap:6px;padding-bottom:12px}
   .nx-side:has(.nx-dow){flex-basis:100%;flex-direction:row;align-items:center;gap:10px;padding-bottom:0}   /* 日付が決まったら、曜日と時刻は日付の下の行に */
   .nx-dow{width:42px;height:42px;font-size:19px}
+  html:lang(zh) .nx-dow,html:lang(en) .nx-dow{min-width:42px;padding:0 13px;font-size:16px}
   .nx-tbd{font-size:15px;padding:4px 13px}
   .nx-time{font-size:20px}
   .nx-h1{font-size:25px;line-height:1.45;margin-top:10px}
@@ -120,6 +123,7 @@ button.nx-row:hover,a.nx-row:hover{background:rgba(20,22,43,.05)}
   .nx-board.nx-m{display:block;margin-top:22px;border:1px solid rgba(20,22,43,.07);padding:18px 4px 16px}
   .nx-top.nx-nofacts + .nx-wrap .nx-board.nx-m{margin-top:16px}
   .nx-row{grid-template-columns:74px 1fr auto;padding:11px 12px}
+  html:lang(zh) .nx-row,html:lang(en) .nx-row{grid-template-columns:92px 1fr auto}
   .nx-d{font-size:19px}
   .nx-d.nx-tx{font-size:13.5px}
   .nx-facts{margin-top:-52px}

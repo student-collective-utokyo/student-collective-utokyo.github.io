@@ -11,7 +11,7 @@
     var view = page === 'home' ? M.home : page;
     if (!Site.views[view]) view = 'next';
     document.body.setAttribute('data-view', view);
-    document.title = (page === 'home' ? '' : TITLES[view] + '｜') + BASE;
+    document.title = (page === 'home' ? '' : Site.t(TITLES[view]) + Site.t('｜')) + Site.t(BASE);
     Site.views[view](M, document.getElementById('app'));
     // アドレスに #do のような場所がついているときは、ページができてからそこへ移動する
     if (location.hash) {
