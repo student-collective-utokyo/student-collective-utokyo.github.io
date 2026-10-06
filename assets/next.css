@@ -19,9 +19,13 @@ body[data-view="next"]:not(.osc-stuck) .osc-mark .osc-mark-w{display:block}
 .nx-lbl{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:700}
 .nx-lbl span{background:#fff;color:var(--ink);font-size:14px;font-weight:700;border-radius:999px;padding:3px 13px}
 .nx-date{display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 22px;margin-top:2px}   /* 入りきらないときは折り返す */
-.nx-date b{font-size:218px;font-weight:800;line-height:.98;letter-spacing:-.035em;margin-left:-8px;white-space:nowrap}
-.nx-date b small{font-size:.34em;font-weight:700;letter-spacing:0;margin:0 .02em 0 0}
-.nx-date b small + small,.nx-date b small:last-child{margin:0 0 0 .08em}
+/* 「第1回」の大きな字。漢字と数字のあいだに自動で入るすきま（text-autospace）は、ここでは止めて、同じ幅を下の margin で入れる。
+   iPhone のブラウザは、自動のすきまを箱の幅に数えないので、止めないと「回」のうしろの「日程調整中」がくっついてしまう。 */
+.nx-date b{font-size:218px;font-weight:800;line-height:.98;letter-spacing:-.035em;margin-left:-8px;white-space:nowrap;text-autospace:no-autospace}
+.nx-date b small{font-size:.34em;font-weight:700;letter-spacing:0;margin:0 .265em 0 0}
+.nx-date b small + small,.nx-date b small:last-child{margin:0 0 0 .325em}
+html:lang(en) .nx-date b small{margin:0 .02em 0 0}   /* 英語の「No.」は、もともと自動のすきまが入らないので、もとの幅のまま */
+html:lang(en) .nx-date b small + small,html:lang(en) .nx-date b small:last-child{margin:0 0 0 .08em}
 .nx-date b.nx-tx{font-size:96px;line-height:1.25;letter-spacing:0;margin-left:0}
 .nx-side{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding-bottom:26px}
 .nx-dow{width:60px;height:60px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;font-size:27px;font-weight:700}
