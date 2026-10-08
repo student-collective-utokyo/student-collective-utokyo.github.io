@@ -10,7 +10,7 @@
     toastEl.textContent = msg;
     toastEl.classList.add('on');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 2600);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 4000);
   }
 
   // ── 重ねて出すパネル ──

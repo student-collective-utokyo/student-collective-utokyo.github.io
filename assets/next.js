@@ -5,7 +5,6 @@
   var Site = window.Site, U = Site.ui, S = Site.shell, esc = Site.esc, t = Site.t, T = Site.T;
 
   var ARROW = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11l6-6M5.5 5H11v5.5"/></svg>';
-  var CLOCK = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.5"/><path d="M10 5.8V10l2.8 1.8"/></svg>';
 
   function svg(d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; }
   var IC = {
@@ -53,7 +52,8 @@
         '<h1 class="nx-h1">' + t('次回のイベントは、<br>決まり次第お知らせします。') + '</h1>';
     }
     var noTitle = !ev.title && !ev.bigTitle.length;   // 題がない回は、回の名前が大きな見出しになるので、上の小さな行には種類だけを出す
-    var wait = function (text) { return '<p class="nx-wait">' + CLOCK + '<span>' + text + '</span></p>'; };
+    // まだ申し込めないあいだも、ボタンは出しておく。押すと「準備中です」と小さく知らせる
+    var soon = function (cls, label, msg) { return '<button type="button" class="' + cls + '" data-toast="' + msg + '">' + label + '</button>'; };
     if (!ev.date) {
       // 日程が決まっていないとき：「第1回」を大きく出す
       var no = ev.no, parts = t('第{n}回').split('{n}');   // 「第」と「回」は小さく、数字は大きく出す
@@ -61,20 +61,21 @@
       return '<p class="nx-lbl"><span>' + T('次回') + '</span>' + esc(no || noTitle ? ev.kindLabel : ev.name) + '</p>' +
         '<div class="nx-date">' + big + '<div class="nx-side"><span class="nx-tbd">' + T('日程調整中') + '</span>' + (ev.timeText ? '<span class="nx-time">' + esc(ev.timeText) + '</span>' : '') + '</div></div>' +
         headline(ev) +
-        wait(T('申し込みは準備中です。日程が決まり次第、このページから申し込めるようになります。')) + S.langNote();
+        '<div class="nx-act">' + soon('nx-cta', T('Lumaで申し込む') + ARROW, T('申し込みは準備中です。日程が決まり次第、このページから申し込めるようになります。')) +
+        soon('nx-sec', T('カレンダーに追加'), T('日程が決まり次第、カレンダーに追加できるようになります。')) + '</div>' + S.langNote();
     }
     // 日程が決まっているとき：日付を大きく出す
     var apply = M.demo
       ? '<button type="button" class="nx-cta" data-hero-cta data-toast="' + T('サンプルのため、Lumaのページには移動しません。') + '">' + T('Lumaで申し込む') + ARROW + '</button>'
-      : (ev.applyUrl ? '<a class="nx-cta" data-hero-cta href="' + esc(ev.applyUrl) + '" target="_blank" rel="noopener">' + T('Lumaで申し込む') + ARROW + '</a>' : '');
+      : (ev.applyUrl ? '<a class="nx-cta" data-hero-cta href="' + esc(ev.applyUrl) + '" target="_blank" rel="noopener">' + T('Lumaで申し込む') + ARROW + '</a>'
+        : soon('nx-cta', T('Lumaで申し込む') + ARROW, T('申し込みは準備中です。準備ができ次第、このページから申し込めるようになります。')));
     var cal = M.demo
       ? '<button type="button" class="nx-sec" data-toast="' + T('サンプルのため、カレンダーには追加されません。') + '">' + T('カレンダーに追加') + '</button>'
       : '<a class="nx-sec" href="' + esc(calendarUrl(ev)) + '" target="_blank" rel="noopener">' + T('カレンダーに追加') + '</a>';
     return '<p class="nx-lbl"><span>' + T('次回') + '</span>' + esc(noTitle ? ev.kindLabel : ev.name) + '</p>' +
       '<div class="nx-date"><b>' + esc(ev.date.md) + '</b><div class="nx-side"><span class="nx-dow">' + ev.date.dow + '</span>' + (ev.timeText ? '<span class="nx-time">' + esc(ev.timeText) + '</span>' : '') + '</div></div>' +
       headline(ev) +
-      '<div class="nx-act">' + apply + cal + '</div>' +
-      (apply ? '' : wait(T('申し込みは準備中です。準備ができ次第、このページから申し込めるようになります。'))) + S.langNote();
+      '<div class="nx-act">' + apply + cal + '</div>' + S.langNote();
   }
 
   // 今学期の予定

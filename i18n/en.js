@@ -160,6 +160,8 @@ window.SITE_I18N.en = {
     'Sign up',
   'カレンダーに追加':
     'Add to calendar',
+  '日程が決まり次第、カレンダーに追加できるようになります。':
+    'Once the date is set, you can add it to your calendar.',
   '申し込みは準備中です。日程が決まり次第、このページから申し込めるようになります。':
     'Sign-up isn’t open yet. Once the date is set, you can sign up from this page.',
   '申し込みは準備中です。準備ができ次第、このページから申し込めるようになります。':
