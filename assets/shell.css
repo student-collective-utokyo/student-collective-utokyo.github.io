@@ -32,7 +32,7 @@ body.osc-stuck .osc-head{background-color:rgba(247,246,243,.84);-webkit-backdrop
 .osc-brand{display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap;min-width:0}
 .osc-brand:focus-visible{outline-offset:6px;box-shadow:none}   /* マークのまわりの余白に、線が重ならないようにする */
 /* OpenAIのマーク。ファイルの中にまわりの余白が入っているので、大きさだけを決めてそのまま置く（余白の分だけ外側へずらして、マークの左端を本文にそろえる）。
-   黒と白の2つを入れておき、背景が濃いページ（次回のページのいちばん上）では白を出す。 */
+   黒と白の2つを入れてある。いまはどのページも明るい地なので、出すのは黒だけ（白は、濃い背景のページを作るときのために残してある）。 */
 .osc-mark{display:block;flex:none;width:56px;height:56px;margin:0 -14px}
 .osc-mark img{display:block;width:100%;height:100%}
 .osc-mark .osc-mark-w{display:none}
