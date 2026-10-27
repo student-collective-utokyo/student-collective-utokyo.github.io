@@ -61,14 +61,14 @@
       return '<p class="nx-lbl"><span>' + T('次回') + '</span>' + esc(no || noTitle ? ev.kindLabel : ev.name) + '</p>' +
         '<div class="nx-date">' + big + '<div class="nx-side"><span class="nx-tbd">' + T('日程調整中') + '</span>' + (ev.timeText ? '<span class="nx-time">' + esc(ev.timeText) + '</span>' : '') + '</div></div>' +
         headline(ev) +
-        '<div class="nx-act">' + soon('nx-cta', T('申し込む') + ARROW, T('申し込みは準備中です。日程が決まり次第、このページから申し込めるようになります。')) +
+        '<div class="nx-act">' + soon('nx-cta', T('Lumaで申し込む') + ARROW, T('申し込みは準備中です。日程が決まり次第、このページから申し込めるようになります。')) +
         soon('nx-sec', T('カレンダーに追加'), T('日程が決まり次第、カレンダーに追加できるようになります。')) + '</div>' + S.langNote();
     }
     // 日程が決まっているとき：日付を大きく出す
     var apply = M.demo
-      ? '<button type="button" class="nx-cta" data-hero-cta data-toast="' + T('サンプルのため、申し込みのページには移動しません。') + '">' + T('申し込む') + ARROW + '</button>'
-      : (ev.applyUrl ? '<a class="nx-cta" data-hero-cta href="' + esc(ev.applyUrl) + '" target="_blank" rel="noopener">' + T('申し込む') + ARROW + '</a>'
-        : soon('nx-cta', T('申し込む') + ARROW, T('申し込みは準備中です。準備ができ次第、このページから申し込めるようになります。')));
+      ? '<button type="button" class="nx-cta" data-hero-cta data-toast="' + T('サンプルのため、Lumaのページには移動しません。') + '">' + T('Lumaで申し込む') + ARROW + '</button>'
+      : (ev.applyUrl ? '<a class="nx-cta" data-hero-cta href="' + esc(ev.applyUrl) + '" target="_blank" rel="noopener">' + T('Lumaで申し込む') + ARROW + '</a>'
+        : soon('nx-cta', T('Lumaで申し込む') + ARROW, T('申し込みは準備中です。準備ができ次第、このページから申し込めるようになります。')));
     var cal = M.demo
       ? '<button type="button" class="nx-sec" data-toast="' + T('サンプルのため、カレンダーには追加されません。') + '">' + T('カレンダーに追加') + '</button>'
       : '<a class="nx-sec" href="' + esc(calendarUrl(ev)) + '" target="_blank" rel="noopener">' + T('カレンダーに追加') + '</a>';

@@ -53,7 +53,7 @@ window.SITE_CONTENT = {
       bringNote: '充電器もあると安心です',
       fee: '無料',
       feeNote: '学部・学年は問いません',
-      applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSej8RG3TLU_zNMH3iCaS_c2Th7DlxGUZH0IqAK90UIarxyScw/viewform',   // 申し込みのページのアドレス（Googleフォームなど）
+      applyUrl: 'https://luma.com/ihpg64dk',   // Lumaのページのアドレス。例：'https://lu.ma/xxxx'
       people: ''                     // 参加した人数。終わったあとに書きます。例：'34'
     },
     {

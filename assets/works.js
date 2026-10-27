@@ -31,8 +31,8 @@
       main = '<span class="ws-nx-lbl">' + T('次回') + t(' ・ ') + esc(ev.name) + '</span><span class="ws-nx-when">' + when + '</span>' +
         (ev.title ? '<span class="ws-nx-ttl">' + esc(ev.title) + '</span>' : '') +
         (meta ? '<span class="ws-nx-meta">' + meta + '</span>' : '');
-      var label = '<span class="ws-l">' + T('申し込む') + '</span><span class="ws-s">' + T('申し込む') + '</span>' + S.ARROW;
-      if (ev.date && M.demo) btn = '<button type="button" class="osc-btn osc-btn-1 ws-nx-btn" data-toast="' + T('サンプルのため、申し込みのページには移動しません。') + '">' + label + '</button>';
+      var label = '<span class="ws-l">' + T('Lumaで申し込む') + '</span><span class="ws-s">' + T('申し込む') + '</span>' + S.ARROW;
+      if (ev.date && M.demo) btn = '<button type="button" class="osc-btn osc-btn-1 ws-nx-btn" data-toast="' + T('サンプルのため、Lumaのページには移動しません。') + '">' + label + '</button>';
       else if (ev.date && ev.applyUrl) btn = '<a class="osc-btn osc-btn-1 ws-nx-btn" href="' + esc(ev.applyUrl) + '" target="_blank" rel="noopener">' + label + '</a>';
       else soon = '<p class="ws-nx-soon">' + (ev.date ? T('申し込みは準備中です。準備ができ次第、ここから申し込めます。') : T('申し込みは準備中です。日程が決まり次第、ここから申し込めます。')) + '</p>';
     }

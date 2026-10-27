@@ -58,7 +58,7 @@
 
       '<section class="ab-sec ab-c5" id="join">' + head('05', T('参加するには')) + '<div class="ab-body"><ol class="ab-steps">' +
       '<li class="ab-step"><h3>' + T('次回の日程をチェックする') + '</h3><p>' + (ev && ev.date ? T('次回は{d}です。', { d: ev.date.long }) : T('日程は、決まり次第このサイトに載せます。')) + '</p></li>' +
-      '<li class="ab-step"><h3>' + T('申し込む') + '</h3><p>' + (open ? T('次回のページから申し込めます。') : T('申し込みは準備中です。日程が決まり次第、申し込めるようになります。')) + '</p></li>' +
+      '<li class="ab-step"><h3>' + T('Lumaで申し込む') + '</h3><p>' + (open ? T('次回のページから申し込めます。') : T('申し込みは準備中です。日程が決まり次第、申し込めるようになります。')) + '</p></li>' +
       '<li class="ab-step"><h3>' + T('{x}を持って、会場へ', { x: bring }) + '</h3><p>' + (bringNote ? esc(bringNote) + ((Site.lang === 'ja' ? /[。！？]$/ : /[。！？.!?]$/).test(bringNote) ? '' : T('。')) : '') + '</p></li></ol>' + S.langNote() +
       (A.faq.length ? '<h3 class="ab-faq-h">' + T('よくある質問') + '</h3><div class="ab-faq">' + A.faq.map(function (f) { return '<details><summary>' + esc(f.q) + IC.down + '</summary><p>' + esc(f.a) + '</p></details>'; }).join('') + '</div>' : '') +
       '</div></section>' +

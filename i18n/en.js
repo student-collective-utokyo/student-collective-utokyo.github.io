@@ -528,8 +528,10 @@ window.SITE_I18N.en = {
     'See the real page',
   'サンプル表示中です。作品名と参加者名は架空のもので（運営メンバーは実名です）、写真のかわりに絵を置いています。':
     'Showing sample data. Project titles and participant names are fictional (team members are real), and illustrations stand in for photos.',
-  'サンプルのため、申し込みのページには移動しません。':
-    'This is a sample, so it doesn’t go to the sign-up page.',
+  'Lumaで申し込む':
+    'Sign up on Luma',
+  'サンプルのため、Lumaのページには移動しません。':
+    'This is a sample, so it doesn’t go to Luma.',
   'サンプルのため、カレンダーには追加されません。':
     'This is a sample, so nothing is added to your calendar.',
   'サンプルのため、作品のリンクはありません。':

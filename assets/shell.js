@@ -118,7 +118,7 @@
     var bar = document.createElement('div');
     bar.className = 'osc-cta';
     bar.innerHTML = '<span><b>' + ev.date.long + (ev.start ? ' ' + ev.start.text : '') + '</b><small>' + esc(ev.name) + '</small></span>' +
-      (M.demo ? '<button type="button" class="osc-btn osc-btn-1" data-toast="' + T('サンプルのため、申し込みのページには移動しません。') + '">' + T('申し込む') + ARROW + '</button>'
+      (M.demo ? '<button type="button" class="osc-btn osc-btn-1" data-toast="' + T('サンプルのため、Lumaのページには移動しません。') + '">' + T('申し込む') + ARROW + '</button>'
         : '<a class="osc-btn osc-btn-1" href="' + esc(ev.applyUrl) + '" target="_blank" rel="noopener">' + T('申し込む') + ARROW + '</a>');
     document.body.appendChild(bar);
     window.dispatchEvent(new Event('scroll'));
