@@ -116,6 +116,12 @@ window.SITE_I18N.en = {
     'Build what you want, on the spot.',
   'はじめてのCodex':
     'First steps with Codex',
+  '知るカフェ 東京大学（駒場）前店':
+    'Shiru Cafe, University of Tokyo (Komaba)',
+  '駒場東大前駅から徒歩1分。当日までに「SHIRU CAFE」アプリを入れておいてください':
+    '1-minute walk from Komaba-Todaimae Station. Please install the SHIRU CAFE app before the day',
+  '第2回からの日程は、決まり次第このページに載せます。':
+    'Dates from Workshop 2 on will be posted here once confirmed.',
   '駒場キャンパス':
     'Komaba Campus',
   '教室は調整中です':
@@ -154,8 +160,6 @@ window.SITE_I18N.en = {
     'Bring',
   '参加費':
     'Fee',
-  'Lumaで申し込む':
-    'Sign up on Luma',
   '申し込む':
     'Sign up',
   'カレンダーに追加':
@@ -524,8 +528,8 @@ window.SITE_I18N.en = {
     'See the real page',
   'サンプル表示中です。作品名と参加者名は架空のもので（運営メンバーは実名です）、写真のかわりに絵を置いています。':
     'Showing sample data. Project titles and participant names are fictional (team members are real), and illustrations stand in for photos.',
-  'サンプルのため、Lumaのページには移動しません。':
-    'This is a sample, so it doesn’t go to Luma.',
+  'サンプルのため、申し込みのページには移動しません。':
+    'This is a sample, so it doesn’t go to the sign-up page.',
   'サンプルのため、カレンダーには追加されません。':
     'This is a sample, so nothing is added to your calendar.',
   'サンプルのため、作品のリンクはありません。':

@@ -1,7 +1,7 @@
 /* 「はじめての方へ」のページ。クラス名は ab- ではじめます。
    角の丸い大きなブロックを、1つずつ色を変えて上から並べます。影はつけず、ブロックどうしは重ねません。 */
-body[data-view="about"]{--blue:#0284FE;--green:#40C875;--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#3a3c4e;--line:rgba(20,22,43,.12);--osc-w:1216px;--osc-gut:32px;background:var(--paper);color:var(--ink)}
-.ab-page{max-width:1280px;margin:0 auto;padding:6px 32px 0}
+body[data-view="about"]{--blue:#0284FE;--green:#40C875;--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#3a3c4e;--line:rgba(20,22,43,.12);background:var(--paper);color:var(--ink)}
+.ab-page{max-width:1320px;margin:0 auto;padding:6px 44px 0}   /* 幅と左右の余白はほかのページと同じにする（ちがうと、ページを移るたびに上のメニューが横にずれる） */
 
 /* いちばん上 */
 .ab-hero{container-type:inline-size;border-radius:28px;overflow:hidden;padding:64px 60px 62px;background:
@@ -88,7 +88,6 @@ body[data-view="about"]{--blue:#0284FE;--green:#40C875;--paper:#F4F2F0;--ink:#14
   .ab-sec{grid-template-columns:220px minmax(0,1fr);gap:28px;padding:34px 34px 38px}
 }
 @media (max-width:860px){
-  body[data-view="about"]{--osc-gut:16px}   /* 上のサイト名の左端を、本文の左端にそろえる */
   .ab-page{padding:6px 16px 0}
   .ab-hero{border-radius:24px;padding:30px 22px 28px}
   .ab-h1{font-size:36px;font-size:clamp(26px,12cqw,36px);line-height:1.32;margin-top:14px}   /* 1行が8文字まで入るように、幅に合わせて小さくする */

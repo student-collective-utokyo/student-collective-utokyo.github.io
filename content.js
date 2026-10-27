@@ -24,7 +24,7 @@ window.SITE_CONTENT = {
   term: {
     label: '2026年10月〜12月',
     workshops: 4,          // 今学期のワークショップの回数
-    note: '日程は、教室が決まり次第このページに載せます。'   // 「次回」のページの「今学期の予定」のいちばん下に出るひとこと
+    note: '第2回からの日程は、決まり次第このページに載せます。'   // 「次回」のページの「今学期の予定」のいちばん下に出るひとこと
   },
 
   /* ── 3. イベント ────────────────────────────────────────────
@@ -39,21 +39,21 @@ window.SITE_CONTENT = {
       kind: 'workshop',              // 'workshop' ＝ ワークショップ　'showcase' ＝ ショーケース
       name: '第1回ワークショップ',
       short: '第1回',
-      date: '',                      // 例：'2026-10-22'
-      start: '',                     // 始まる時刻。例：'18:45'
-      end: '',                       // 終わる時刻。例：'20:30'
+      date: '2026-11-03',            // 例：'2026-10-22'
+      start: '18:45',                // 始まる時刻。例：'18:45'
+      end: '20:30',                  // 終わる時刻。例：'20:30'
       title: 'はじめてのCodex：ほしいものを、その場でつくろう',
       bigTitle: ['はじめてのCodex。', 'ほしいものを、その場でつくろう。'],   // 大きく出すときの1行目と2行目。この行を消すと title がそのまま出ます
       sub: 'はじめてのCodex',         // 「今学期の予定」に出る短い説明
-      place: '駒場キャンパス',
-      placeNote: '教室は調整中です',
+      place: '知るカフェ 東京大学（駒場）前店',
+      placeNote: '駒場東大前駅から徒歩1分。当日までに「SHIRU CAFE」アプリを入れておいてください',
       tool: 'Codex',
       toolNote: 'はじめての人も歓迎です',
       bring: 'ノートPC',
       bringNote: '充電器もあると安心です',
       fee: '無料',
       feeNote: '学部・学年は問いません',
-      applyUrl: '',                  // Lumaのページのアドレス。例：'https://lu.ma/xxxx'
+      applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSej8RG3TLU_zNMH3iCaS_c2Th7DlxGUZH0IqAK90UIarxyScw/viewform',   // 申し込みのページのアドレス（Googleフォームなど）
       people: ''                     // 参加した人数。終わったあとに書きます。例：'34'
     },
     {
