@@ -60,13 +60,19 @@
     return '<img class="' + cls + '" src="' + BADGE + '" width="480" height="480" alt="' + T('OpenAI Student Collective Campus Lead 2026のバッジ') + '">';
   }
 
+  // ?demo を外した、いまのページのアドレス（?id=w1 や ?lang=… は残す）
+  function realHref() {
+    var q = new URLSearchParams(location.search); q.delete('demo');
+    var s = q.toString().replace(/=(&|$)/g, '$1');
+    return (location.pathname.split('/').pop() || 'index.html') + (s ? '?' + s : '') + location.hash;
+  }
   function mount(view) {
     var M = Site.M, app = document.getElementById('app');
     // サンプル表示中の帯（?demo のときだけ）
     if (M.demo) {
       var smp = document.createElement('div');
       smp.className = 'osc-smp';
-      smp.innerHTML = T('サンプル表示中') + '<span>' + T('作品名・参加者名・日付は架空のものです（運営メンバーは実名です）。') + '</span><i>' + T('架空のデータです') + '</i><a href="' + esc((location.pathname.split('/').pop() || 'index.html') + (Site.lang !== 'ja' ? '?lang=' + Site.lang : '')) + '">' + T('実際のページを見る') + '</a>';
+      smp.innerHTML = T('サンプル表示中') + '<span>' + T('作品名・参加者名・日付は架空のものです（運営メンバーは実名です）。') + '</span><i>' + T('架空のデータです') + '</i><a href="' + esc(realHref()) + '">' + T('実際のページを見る') + '</a>';
       document.body.insertBefore(smp, app);
     }
     // 上に固定されるメニュー
@@ -126,7 +132,7 @@
 
   // 作品の小さなカード
   function card(w) {
-    return '<div class="osc-wkc" role="button" tabindex="0" data-work="' + esc(w.id) + '" aria-label="' + esc(w.title) + '">' + U.thumb(w) + '<b>' + esc(w.title) + '</b><span>' + esc(w.maker) + '</span></div>';
+    return '<div class="osc-wkc" role="button" tabindex="0" data-work="' + esc(w.id) + '" aria-label="' + esc(w.title) + '">' + U.thumb(w) + U.linkPill(w) + '<b>' + esc(w.title) + '</b><span>' + esc(w.makerText || w.maker) + '</span></div>';
   }
   // 準備中の作品の枠
   function pendingCard(p) {

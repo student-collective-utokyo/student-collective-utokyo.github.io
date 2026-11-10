@@ -1,0 +1,215 @@
+/* 「活動記録」の1件をくわしく読むページ。クラス名は rd- ではじめます。
+   色は「活動記録」のページと同じ（白に近い紙の色に、角の緑）。 */
+body[data-view="record"]{--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#33354a;--deep:#157A43;--line:rgba(20,22,43,.14);
+  --ic-bg:#DDF1E4;--ic-fg:#157A43;
+  color:var(--ink);background-color:var(--paper);background-repeat:no-repeat;background-size:100% 980px;
+  background-image:radial-gradient(34% 40% at 100% 0%,rgba(64,200,117,.9) 0,rgba(64,200,117,0) 72%),
+    radial-gradient(22% 30% at 0% 52%,rgba(64,200,117,.36) 0,rgba(64,200,117,0) 72%)}
+.rd-wrap{max-width:1180px;margin:0 auto;padding:0 44px}
+/* ほかのページから「record.html#t-diff」のように開いたとき、ブラウザ自身も見出しへ移るので、上のメニューの分（ui.js の jumpTo と同じ 76px）を空けておく */
+.rd-sec,.rd-try{scroll-margin-top:76px}
+
+/* ── いちばん上（どの版でも同じ） ── */
+.rd-back{display:inline-flex;align-items:center;gap:4px;margin-top:22px;font-size:14px;font-weight:700;color:var(--body);padding:6px 10px 6px 4px;border-radius:999px}
+.rd-back svg{width:18px;height:18px}
+.rd-back:hover{background:rgba(20,22,43,.06)}
+.rd-kick{display:flex;flex-wrap:wrap;gap:0 12px;font-size:14.5px;font-weight:700;color:var(--deep);margin-top:22px}
+.rd-h1{font-size:50px;line-height:1.32;font-weight:700;letter-spacing:.01em;margin-top:8px;max-width:960px;text-wrap:balance}
+.rd-lead{font-size:17px;line-height:1.95;color:var(--body);margin-top:18px;max-width:760px}
+.rd-facts{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:0;margin-top:28px;background:#fff;border:1px solid rgba(20,22,43,.07);border-radius:16px;width:max-content;max-width:100%}
+.rd-facts > div{display:grid;grid-template-columns:36px auto;column-gap:12px;align-items:center;padding:14px 22px 15px;border-left:1px solid var(--line)}
+.rd-facts > div:first-child{border-left:0}
+.rd-facts .osc-ic{grid-row:1 / span 2;width:36px;height:36px;border-radius:11px}
+.rd-facts .osc-ic svg{width:20px;height:20px}
+.rd-facts dt{font-size:12px;font-weight:600;color:var(--mute);line-height:1.4;align-self:end}
+.rd-facts dd{font-size:15.5px;font-weight:700;line-height:1.45;align-self:start}
+
+/* ── 本文の部品 ── */
+.rd-art p{font-size:16.5px;line-height:1.95;color:var(--body);margin-top:16px}
+.rd-fig{margin:22px 0 0}
+.rd-zoomable{position:relative;display:block;width:100%;border-radius:14px;overflow:hidden;cursor:zoom-in;background:#fff}
+.rd-slide .rd-zoomable{border:1px solid rgba(20,22,43,.08);box-shadow:0 10px 30px -18px rgba(20,22,43,.35)}
+.rd-zoomable img{width:100%;height:auto}
+.rd-photo img{aspect-ratio:4/3;object-fit:cover}
+.rd-slide img{aspect-ratio:16/9;object-fit:cover}
+.rd-zoom-ic{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;opacity:0;transition:opacity .15s;color:var(--ink)}
+.rd-zoom-ic svg{width:18px;height:18px}
+.rd-zoomable:hover .rd-zoom-ic,.rd-zoomable:focus-visible .rd-zoom-ic{opacity:1}
+.rd-fig figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+
+/* コピーできる文章 */
+.rd-pr{margin-top:20px;background:#14332A;border-radius:16px;padding:14px 14px 14px;color:#fff;position:relative}
+.rd-pr-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px 12px}
+.rd-pr-h span{font-size:13px;font-weight:700;color:#BFE7CD;line-height:1.5}
+.rd-copy{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:999px;background:#BFE7CD;color:#10281B;font-size:13.5px;font-weight:700;flex:none;transition:background .15s}
+.rd-copy svg{width:16px;height:16px}
+.rd-copy:hover{background:#d3f0dd}
+.rd-copy.rd-copied{background:#fff}
+.rd-pr pre{font-family:var(--font);white-space:pre-wrap;word-break:break-word;background:#DDF0E4;color:#10281B;border-radius:11px;padding:16px 18px;font-size:15px;line-height:1.85;font-weight:600}
+.rd-pr-long pre{max-height:13.5em;overflow:hidden;-webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+.rd-pr-long.rd-pr-open pre{max-height:none;-webkit-mask-image:none;mask-image:none}
+.rd-pr-more{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;height:38px;border-radius:10px;font-size:13.5px;font-weight:700;color:#BFE7CD}
+.rd-pr-more svg{width:16px;height:16px;transition:transform .2s}
+.rd-pr-open .rd-pr-more svg{transform:rotate(180deg)}
+.rd-pr-more:hover{background:rgba(255,255,255,.06)}
+
+/* 番号つきの箇条書き（コツ） */
+.rd-list{margin-top:18px;display:grid;gap:10px}
+.rd-list li{background:#fff;border-radius:14px;padding:16px 18px;border:1px solid rgba(20,22,43,.06)}
+.rd-list b{display:flex;align-items:center;gap:10px;font-size:16.5px;line-height:1.5}
+.rd-list b i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--deep);color:#fff;font-size:13px;display:grid;place-items:center;flex:none}
+.rd-list span{display:block;font-size:15px;line-height:1.85;color:var(--body);margin:6px 0 0 36px}
+
+.rd-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.rd-btn{height:46px;padding:0 20px;font-size:15px;background:#fff}
+.rd-btn svg{width:16px;height:16px}
+
+/* 作品カード：スクリーンショットつき。押すと「作品」のページと同じ、くわしい表示が開く */
+.rd-works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:20px}
+.rd-work{position:relative;display:flex;flex-direction:column;background:#fff;border-radius:16px;padding:10px 10px 14px;border:1px solid rgba(20,22,43,.08);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.rd-work:hover{border-color:rgba(20,22,43,.2);box-shadow:0 14px 30px -20px rgba(20,22,43,.4)}
+.rd-work .th{--th-r:10px;aspect-ratio:16/10}
+.rd-work .osc-lk{top:18px;right:18px}
+.rd-work-t{display:flex;flex-direction:column;gap:3px;padding:12px 6px 0}
+.rd-work-t b{font-size:17px;line-height:1.4}
+.rd-work-t span{font-size:14px;line-height:1.7;color:var(--body)}
+.rd-work-t em{font-style:normal;margin-top:6px;display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:var(--deep)}
+.rd-work-t em svg{width:16px;height:16px}
+
+/* 記録が見つからないとき、日本語以外のページの注意書き */
+.rd-none{margin-top:40px;padding:48px 20px}
+.rd-langnote{margin-top:14px}
+
+/* 画像を大きく見る（重ねて出すパネルの中） */
+@media (min-width:641px){ .osc-sheet:has(.rd-zoom){width:min(94vw,1120px)} }
+.rd-zoom{padding:56px 16px 18px}
+.rd-zoom img{width:100%;height:auto;border-radius:10px}
+.rd-zoom p{font-size:14px;color:#5d5f70;margin-top:10px;text-align:center}
+
+.rd-end{margin-top:56px}
+.rd-end .osc-btn{background:#fff}
+.rd-end svg{width:18px;height:18px}
+
+/* ── 写真の組み合わせと、目次つきの本文 ── */
+/* いちばん上の組み写真：左に集合写真を大きく、右に3枚 */
+.rd-collage{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:clamp(320px,38vw,480px);margin-top:30px}
+.rd-cl{border-radius:14px;height:100%}
+.rd-cl img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.rd-cl:hover img{transform:scale(1.03)}
+.rd-cl1{grid-row:1 / 3;border-radius:18px}
+.rd-cl2{grid-column:2 / 4}
+.rd-n1{grid-template-columns:1fr;grid-template-rows:1fr}
+.rd-n2{grid-template-columns:1fr 1fr;grid-template-rows:1fr}
+.rd-n2 .rd-cl1{grid-row:auto}
+.rd-n2 .rd-cl2{grid-column:auto}
+.rd-n3{grid-template-columns:2fr 1fr}
+.rd-n3 .rd-cl2{grid-column:auto}
+.rd-cl-cap{position:absolute;left:10px;bottom:10px;background:rgba(20,22,43,.62);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);pointer-events:none}
+.rd-a{display:grid;grid-template-columns:230px minmax(0,1fr);gap:0 64px;margin-top:48px;align-items:start}
+.rd-toc{position:sticky;top:calc(var(--osc-top,0px) + var(--osc-headh,64px) + 24px)}
+.rd-toc p{font-size:12.5px;font-weight:700;color:var(--mute);letter-spacing:.06em;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.rd-toc li a{display:flex;gap:10px;padding:8px 6px;font-size:14px;line-height:1.5;color:var(--body);border-radius:8px}
+.rd-toc li a i{font-style:normal;font-size:12px;font-weight:700;color:var(--mute);padding-top:2px;font-variant-numeric:tabular-nums}
+.rd-toc li a:hover{background:rgba(20,22,43,.05)}
+.rd-toc li a.on{color:var(--ink);font-weight:700;background:#fff}
+.rd-toc li a.on i{color:var(--deep)}
+.rd-art{max-width:740px}
+.rd-sec{padding-top:8px;margin-bottom:64px}
+.rd-sec:first-child{padding-top:0}
+.rd-no{font-size:13px !important;font-weight:700;color:var(--deep) !important;margin:0 !important;letter-spacing:.04em}
+.rd-sec h2{font-size:30px;line-height:1.4;font-weight:700;margin-top:4px;text-wrap:balance}
+/* いちばん上の「自分でやってみる」へのリンク（来られなかった人向け） */
+.rd-jump{display:inline-flex;align-items:center;gap:10px;margin-top:16px;height:42px;padding:0 14px 0 6px;border-radius:999px;background:#fff;border:1px solid rgba(20,22,43,.08);font-size:14.5px;font-weight:700;color:var(--ink)}
+.rd-jump span{background:var(--ic-bg);color:var(--deep);font-size:12.5px;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.rd-jump b{white-space:nowrap}
+.rd-jump small{font-size:13px;font-weight:600;color:var(--mute);white-space:nowrap;margin-left:-4px}
+.rd-jump svg{width:16px;height:16px;color:var(--deep)}
+.rd-jump:hover{border-color:rgba(20,22,43,.22)}
+/* 目次の「自分でやってみる」は、当日の流れとは別のものなので、線で分ける */
+.rd-toc li.rd-toc-try{border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
+.rd-toc li.rd-toc-try i{color:var(--deep)}
+/* 記録のいちばん下：自分でやってみる */
+.rd-try{background:#fff;border-radius:22px;border:1px solid rgba(20,22,43,.06);padding:30px 30px 6px;box-shadow:0 24px 60px -44px rgba(20,22,43,.4)}
+.rd-try-k{display:inline-block;background:var(--ic-bg);color:var(--deep) !important;font-size:12.5px !important;font-weight:700;padding:3px 12px;border-radius:999px;margin:0 !important;line-height:1.6 !important}
+.rd-try h2{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;font-size:30px;line-height:1.4;margin-top:10px}
+.rd-try h2 small{font-size:14px;font-weight:600;color:var(--mute)}
+.rd-art .rd-try-l{font-size:15.5px;margin-top:8px}
+.rd-try .rd-steps{margin-top:0}
+.rd-try .rd-steps > ol{margin-top:24px}
+
+.rd-steps > ol{margin-top:18px;max-width:820px}
+.rd-steps > ol > li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 18px;position:relative;padding-bottom:30px}
+.rd-steps > ol > li::before{content:"";position:absolute;left:21px;top:46px;bottom:6px;width:2px;background:rgba(21,122,67,.22)}
+.rd-steps > ol > li:last-child::before{display:none}
+.rd-st-n{width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid var(--deep);color:var(--deep);font-weight:700;font-size:18px;display:grid;place-items:center}
+.rd-st-b h3{font-size:20px;line-height:1.5;padding-top:7px}
+.rd-st-b p{font-size:15.5px;line-height:1.9;color:var(--body);margin-top:6px}
+.rd-st-link{display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-size:14.5px;font-weight:700;color:var(--deep)}
+.rd-st-link svg{width:16px;height:16px}
+
+/* ── 幅がせまいとき ── */
+@media (max-width:1100px){
+  .rd-h1{font-size:40px}
+  .rd-a{grid-template-columns:200px minmax(0,1fr);gap:0 40px}
+}
+@media (max-width:960px){
+  .rd-facts{grid-template-columns:1fr 1fr;width:100%}
+  .rd-facts > div:nth-child(3){border-left:0}
+  .rd-facts > div:nth-child(n+3){border-top:1px solid var(--line)}
+  .rd-a{display:block}
+  .rd-toc{position:static;margin-bottom:34px}
+  .rd-toc ol{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}
+  .rd-toc ol::-webkit-scrollbar{display:none}
+  .rd-toc li a{white-space:nowrap;background:#fff;border:1px solid rgba(20,22,43,.08);border-radius:999px;padding:7px 14px;font-size:13.5px}
+  .rd-toc li a.on{background:var(--ink);color:#fff}
+  .rd-toc li a.on i{color:#BFE7CD}
+  .rd-toc li.rd-toc-try{border-top:0;margin-top:0;padding-top:0}
+}
+@media (max-width:720px){
+  body[data-view="record"]{background-size:100% 560px;background-image:radial-gradient(70% 26% at 100% 0%,rgba(64,200,117,.9) 0,rgba(64,200,117,0) 72%)}
+  .rd-wrap{padding:0 16px}
+  .rd-back{margin-top:12px}
+  .rd-kick{font-size:13px;margin-top:12px}
+  .rd-h1{font-size:28px;line-height:1.42;margin-top:6px}
+  .rd-lead{font-size:15.5px;line-height:1.9;margin-top:12px}
+  .rd-facts{margin-top:20px;border-radius:14px}
+  .rd-facts > div{grid-template-columns:30px minmax(0,1fr);column-gap:9px;padding:12px 12px 13px}
+  .rd-facts .osc-ic{width:30px;height:30px;border-radius:9px}
+  .rd-facts .osc-ic svg{width:17px;height:17px}
+  .rd-facts dd{font-size:14px}
+  .rd-art p{font-size:15.5px;line-height:1.9;margin-top:14px}
+  .rd-zoomable{border-radius:10px}
+  .rd-pr{border-radius:14px;padding:12px}
+  .rd-pr pre{font-size:14px;padding:13px 14px}
+  .rd-list span{margin-left:0}
+  .rd-works{grid-template-columns:1fr}
+  /* スマホ：集合写真を上に大きく、下に3枚を正方形で並べる */
+  .rd-collage{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto auto;height:auto;gap:6px;margin-top:22px}
+  .rd-cl{height:auto;border-radius:10px}
+  .rd-cl img{aspect-ratio:1 / 1;height:auto}
+  .rd-cl1{grid-column:1 / 4;grid-row:auto;border-radius:12px}
+  .rd-cl1 img{aspect-ratio:4 / 3}
+  .rd-cl2{grid-column:auto}
+  .rd-cl-cap{display:none}
+  .rd-cl1 .rd-cl-cap{display:block}
+  /* 写真が3枚・2枚のときは、下の段を2列・1列にして、あきをつくらない */
+  .rd-n3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rd-n2{grid-template-columns:1fr}
+  .rd-n3 .rd-cl1,.rd-n2 .rd-cl1{grid-column:1 / -1}
+  .rd-n3 .rd-cl img{aspect-ratio:4 / 3}
+  .rd-work .osc-lk{top:16px;right:16px}
+  .rd-a{margin-top:26px}
+  .rd-sec{margin-bottom:48px}
+  .rd-sec h2{font-size:23px}
+  .rd-jump{gap:8px;padding:0 10px 0 6px;font-size:14px}
+  .rd-jump small{display:none}
+  .rd-try{margin:0 -4px;padding:22px 16px 2px;border-radius:18px}
+  .rd-try h2{font-size:23px}
+  .rd-art .rd-try-l{font-size:15px}
+  .rd-steps > ol > li{grid-template-columns:36px minmax(0,1fr);gap:0 12px}
+  .rd-steps > ol > li::before{left:17px;top:38px}
+  .rd-st-n{width:36px;height:36px;font-size:16px}
+  .rd-st-b h3{font-size:17.5px;padding-top:4px}
+  .rd-st-b p{font-size:15px}
+  .rd-end{margin-top:40px}
+}

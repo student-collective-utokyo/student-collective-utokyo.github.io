@@ -3,7 +3,7 @@
 (function () {
   'use strict';
   var Site = window.Site;
-  var TITLES = { next: '次回のイベント', works: '作品', records: '活動記録', studio: 'Studio Hours', members: '運営メンバー', about: 'はじめての方へ' };
+  var TITLES = { next: '次回のイベント', works: '作品', records: '活動記録', studio: 'Studio Hours', members: '運営メンバー', about: 'はじめての方へ', record: '活動記録' };
   var BASE = 'OpenAI Student Collective at UTokyo｜東京大学 学生運営';
 
   Site.load(function (M) {
@@ -16,6 +16,7 @@
     // アドレスに #do のような場所がついているときは、ページができてからそこへ移動する
     if (location.hash) {
       var id = location.hash.slice(1), touched = false;
+      try { id = decodeURIComponent(id); } catch (e) { /* こわれた % があるときは、そのまま使う */ }
       ['wheel', 'touchstart', 'keydown'].forEach(function (ev) { window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true }); });
       Site.ui.jumpTo(id, false);
       // 文字のフォントを読みこむと高さが少し変わるので、読みこみが終わったらもう一度合わせる（そのあいだに自分で動かした人はそのまま）

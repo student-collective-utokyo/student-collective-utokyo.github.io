@@ -96,6 +96,28 @@
     issues.push(where + '：color「' + v + '」は使えません。\' をつけずに、0〜7の数字だけを書いてください。いまは自動で選んだ色で表示しています。');
     return hash(title);
   }
+  // 全角の数字を半角に（'４０' → '40'）
+  function half(v) { return v.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }); }
+  // 「つくった人」に、人の名前ではなく、このことばを書いたときは、それぞれのことばに直して出す
+  var GENERIC_MAKERS = ['参加者'];
+  // 参加した人数の出し方。'34' → 34人、'約40' → 約40人（中国語・英語のページでは、それぞれのことばで「約」を出す）
+  function peopleText(p) {
+    if (!p) return '';
+    var m = /^約\s*(\d+)$/.exec(p);
+    return m ? t('約{n}人', { n: m[1] }) : t('{n}人', { n: p });
+  }
+  // 作品のスクリーンショット。shots に並べたものと、image（shots がないとき）を使う
+  function shotsOf(w, where) {
+    if (where) listed(w.shots, where + ' の shots');
+    var a = list(w.shots).map(str).filter(Boolean);
+    return a.length ? a : (str(w.image) ? [str(w.image)] : []);
+  }
+  // focus（写真のどこを中心に見せるか）は '50% 30%' の形だけを通す
+  function focusOf(v, where) {
+    var f = str(v);
+    if (f && !/^\d{1,3}% \d{1,3}%$/.test(f)) { issues.push(where + '：focus「' + f + '」は \'50% 30%\' の形で書いてください。いまは写真のまんなかを表示しています。'); return ''; }
+    return f;
+  }
   // 項目の名前の書きまちがいを見つけて、チェックに出す
   function known(o, names, where) {
     if (!o || typeof o !== 'object' || Array.isArray(o)) return;
@@ -116,9 +138,14 @@
     term: ['label', 'workshops', 'note'],
     event: ['id', 'kind', 'name', 'short', 'date', 'when', 'start', 'end', 'title', 'bigTitle', 'sub', 'place', 'placeNote', 'tool', 'toolNote', 'bring', 'bringNote', 'fee', 'feeNote', 'applyUrl', 'people'],
     studio: ['when', 'time', 'place', 'note'],
-    work: ['id', 'title', 'about', 'maker', 'makerNote', 'from', 'date', 'tool', 'category', 'image', 'url', 'look', 'color', 'num', 'pick', 'comingSoon'],
+    work: ['id', 'title', 'about', 'detail', 'shots', 'maker', 'makerNote', 'from', 'date', 'tool', 'category', 'image', 'url', 'look', 'color', 'num', 'pick', 'comingSoon'],
     example: ['title', 'about', 'tool', 'category', 'image', 'look', 'color', 'num'],
-    record: ['date', 'label', 'title', 'image', 'focus'],
+    record: ['id', 'date', 'label', 'title', 'titleLines', 'image', 'focus', 'lead', 'summary', 'photos', 'topics', 'steps', 'prompts'],
+    recPhoto: ['src', 'cap', 'focus'],
+    recTopic: ['id', 'h', 'body'],
+    recBlock: ['p', 'photo', 'slide', 'cap', 'alt', 'prompt', 'list', 'links', 'works'],
+    recStep: ['h', 'p', 'link', 'prompt'],
+    recPrompt: ['label', 'text'],
     member: ['name', 'kana', 'role', 'note', 'intro', 'like', 'image', 'email'],
     about: ['catch', 'lead', 'what', 'stats', 'quote', 'quoteFrom', 'officialUrl', 'why', 'workshop', 'studio', 'showcase', 'faq', 'closing'],
     worksPage: ['openTitle', 'openLead', 'title', 'lead'],
@@ -166,7 +193,8 @@
         title: tx(e.title), bigTitle: list(e.bigTitle).map(tx).filter(Boolean), sub: tx(e.sub),
         place: tx(e.place), placeNote: tx(e.placeNote), tool: str(e.tool), toolNote: tx(e.toolNote),
         bring: tx(e.bring), bringNote: tx(e.bringNote), fee: tx(e.fee), feeNote: tx(e.feeNote),
-        applyUrl: sample ? '' : link(e.applyUrl, where), people: str(e.people).replace(/[人名]$/, ''),   // うしろに「人」をつけて出すので、'34人' と書いてあっても「34人人」にならないようにする
+        applyUrl: sample ? '' : link(e.applyUrl, where), people: half(str(e.people)).replace(/[人名]$/, ''),   // うしろに「人」をつけて出すので、'34人' と書いてあっても「34人人」にならないようにする
+        peopleText: peopleText(half(str(e.people)).replace(/[人名]$/, '')),
         done: !!date && date.key < today
       };
     });
@@ -205,9 +233,11 @@
       var title = str(w.title), category = str(w.category);
       works.push({
         id: String(w.id != null ? w.id : 'n' + (i + 1)), seed: typeof w.id === 'number' ? w.id : i + 1,
-        title: t(title), about: tx(w.about), maker: str(w.maker), makerNote: tx(w.makerNote),
+        title: t(title), about: tx(w.about), maker: str(w.maker), makerText: GENERIC_MAKERS.indexOf(str(w.maker)) >= 0 ? tx(w.maker) : str(w.maker), makerNote: tx(w.makerNote),
         from: from, fromLabel: fromLabel, fromShort: fromShort, tool: str(w.tool), category: category,   // category は絞り込みの目印なので日本語のまま持つ。画面に出すときに t() を通す
-        image: str(w.image), url: sample ? '' : link(w.url, where), pick: !!w.pick,
+        // くわしく見たときの説明と、スクリーンショット（何枚でも）。カードの絵は image、なければ shots の1枚目
+        detail: tx(w.detail), shots: shotsOf(w, where),
+        image: str(w.image) || shotsOf(w, '')[0] || '', url: sample ? '' : link(w.url, where), pick: !!w.pick,
         look: LOOKS.indexOf(w.look) >= 0 ? w.look : LOOK_BY_CATEGORY[category] || 'site',
         color: colorOf(w.color, title, where),
         num: Array.isArray(w.num) ? w.num.map(str) : null,
@@ -227,12 +257,87 @@
     // ピックアップを先に。それ以外は書いた順のまま
     works = works.filter(function (w) { return w.pick; }).concat(works.filter(function (w) { return !w.pick; }));
 
+    var workIdList = works.map(function (w) { return w.id; }), recIds = {};
     var records = list(src.records).map(function (r, i) {
-      var where = 'records の' + (i + 1) + '番目（' + str(r.title) + '）', focus = str(r.focus);
+      var where = 'records の' + (i + 1) + '番目（' + str(r.title) + '）';
       known(r, KEYS.record, where); need(r.title, where, 'title');
-      // focus（写真のどこを中心に見せるか）は '50% 30%' の形だけを通す
-      if (focus && !/^\d{1,3}% \d{1,3}%$/.test(focus)) { issues.push(where + '：focus「' + focus + '」は \'50% 30%\' の形で書いてください。いまは写真のまんなかを表示しています。'); focus = ''; }
-      return { date: parseDate(r.date, where), label: tx(r.label), title: tx(r.title), image: str(r.image), focus: focus || '50% 50%', n: i };
+      ['titleLines', 'photos', 'topics', 'steps'].forEach(function (k) { listed(r[k], where + ' の ' + k); });
+      var id = str(r.id);
+      if (id) { if (recIds[id]) issues.push(where + '：id「' + id + '」がほかの記録と重なっています。'); recIds[id] = true; }
+      // 記録のページの中身（topics を書いた記録だけ、くわしいページができる）。本文は日本語だけなので、訳のファイルは見ない
+      var prompts = {};
+      if (r.prompts && typeof r.prompts === 'object') Object.keys(r.prompts).forEach(function (k) {
+        var p = r.prompts[k], at = where + ' の prompts の ' + k;
+        if (!p || typeof p !== 'object' || Array.isArray(p)) { issues.push(at + '：{ label: \'…\', text: \'…\' } の形で書いてください。いまは出していません。'); return; }
+        known(p, KEYS.recPrompt, at); need(p.text, at, 'text');
+        if (str(p.text)) prompts[k] = { label: str(p.label), text: str(p.text) };
+      });
+      // 〔評審P2〕'constructor' のような名前でも、prompts に書いたものだけを使う
+      function promptKey(k, at) { k = str(k); if (k && !Object.prototype.hasOwnProperty.call(prompts, k)) { issues.push(at + '：prompt「' + k + '」は prompts にありません。いまは出していません。'); return ''; } return k; }
+      // ページの中の場所の名前（目次で使う）。半角の英数字と - _ だけ、重ならないように、ページがもともと使っている名前はさける
+      var tids = {}, RESERVED = ['try', 'ft', 'app', 'recent'];
+      var topics = list(r.topics).map(function (tp, j) {
+        var at = where + ' の topics の' + (j + 1) + '番目（' + str(tp.h) + '）';
+        known(tp, KEYS.recTopic, at); need(tp.h, at, 'h'); listed(tp.body, at + ' の body');
+        var tid = str(tp.id), uniq = function (b) { var x = b, k = 2; while (tids[x] || RESERVED.indexOf(x) >= 0) x = b + '-' + (k++); return x; };
+        if (tid && (!/^[A-Za-z0-9_-]+$/.test(tid) || tids[tid] || RESERVED.indexOf(tid) >= 0)) {
+          var fix = uniq('sec' + (j + 1));
+          issues.push(at + '：id「' + tid + '」は使えません。半角の英数字と - だけで、ほかの見出しと重ならない名前にしてください（try・ft・app・recent も使えません）。いまは「' + fix + '」にしています。');
+          tid = fix;
+        } else if (!tid) tid = uniq('sec' + (j + 1));
+        tids[tid] = true;
+        var body = list(tp.body).map(function (b, k) {
+          var bt = at + ' の body の' + (k + 1) + '番目';
+          known(b, KEYS.recBlock, bt);
+          if (b.p != null) return { p: str(b.p) };
+          if (b.photo != null || b.slide != null) return { img: str(b.photo != null ? b.photo : b.slide), slide: b.slide != null, cap: str(b.cap), alt: str(b.alt) || str(b.cap) };
+          if (b.prompt != null) { var pk = promptKey(b.prompt, bt); return pk ? { prompt: pk } : null; }
+          if (b.list != null) {
+            listed(b.list, bt + ' の list');
+            if (list(b.list).some(function (x) { return !Array.isArray(x); })) issues.push(bt + '：list は [[\'見出し\', \'説明\'], …] の形で書いてください。');
+            return { list: list(b.list).filter(Array.isArray).map(function (x) { return [str(x[0]), str(x[1])]; }) };
+          }
+          // 〔評審P2〕ボタンのアドレスは、https:// ではじまるか、このサイトのページ（works.html など）だけ
+          if (b.links != null) { listed(b.links, bt + ' の links'); return { links: list(b.links).map(function (x) {
+            var u = str(list(x)[1]);
+            if (/^https?:/i.test(u)) u = link(u, bt + ' の links');
+            else if (u && !/^[\w-]+\.html$/.test(u)) { issues.push(bt + '：ボタンのアドレス「' + u + '」は使えません。https:// ではじまる形か、works.html のようなこのサイトのページの名前だけ（? や # はつけない）を書いてください。'); u = ''; }
+            return [str(list(x)[0]), u];
+          }).filter(function (x) { return x[0] && x[1]; }) }; }
+          if (b.works != null) {
+            listed(b.works, bt + ' の works');
+            var ws = list(b.works).map(str).filter(function (wid) {
+              if (workIdList.indexOf(wid) >= 0) return true;
+              issues.push(bt + '：作品の id「' + wid + '」が works にありません。いまは出していません。'); return false;
+            });
+            return { works: ws };
+          }
+          issues.push(bt + '：p・photo・slide・prompt・list・links・works のどれかを書いてください。いまは出していません。');
+          return null;
+        }).filter(Boolean);
+        return { id: tid, h: str(tp.h), body: body };
+      });
+      var steps = list(r.steps).map(function (st, j) {
+        var at = where + ' の steps の' + (j + 1) + '番目';
+        known(st, KEYS.recStep, at); need(st.h, at, 'h');
+        if (st.link != null) listed(st.link, at + ' の link');
+        var lk = list(st.link), url = st.link != null ? link(lk[1], at + ' の link') : '';
+        return { h: str(st.h), p: str(st.p), link: url ? [str(lk[0]) || url, url] : null, prompt: promptKey(st.prompt, at) };
+      });
+      var photos = list(r.photos).map(function (p, j) {
+        var at = where + ' の photos の' + (j + 1) + '番目';
+        known(p, KEYS.recPhoto, at); need(p.src, at, 'src');
+        return { src: str(p.src), cap: tx(p.cap), focus: focusOf(p.focus, at) || '50% 50%' };
+      }).filter(function (p) { return p.src; });
+      if (topics.length && id && !byId[id]) issues.push(where + '：id「' + id + '」と同じ id の回が events にありません。日時や場所が出ず、「次回」のページの「前回のようす」にも出ません。');
+      if (topics.length && !str(r.label)) issues.push(where + '：label（「第1回ワークショップ」など）も書いてください。作品のくわしい表示の「…の記録を見る」に使います。');
+      if (topics.length && !id) issues.push(where + '：topics を書いた記録には、id（\'w1\' など、その回と同じもの）も書いてください。いまは記録のページを出していません。');
+      return {
+        id: id, date: parseDate(r.date, where), label: tx(r.label), title: tx(r.title), titleLines: list(r.titleLines).map(str).filter(Boolean),
+        image: str(r.image) || (photos[0] ? photos[0].src : ''), focus: focusOf(r.focus, where) || (photos[0] && !str(r.image) ? photos[0].focus : '50% 50%'),
+        lead: str(r.lead), summary: tx(r.summary), photos: photos, topics: topics, steps: steps, prompts: prompts,
+        page: !!(id && topics.length), n: i
+      };
     });
     // 新しい記録を先に
     records.sort(function (a, b) { return (b.date ? b.date.key : '0').localeCompare(a.date ? a.date.key : '0') || a.n - b.n; });
@@ -337,7 +442,11 @@
     // 画像のファイルが実際にあるかを確かめる（ファイル名の書きまちがいを見つけるため）
     var M = Site.M, imgs = [];
     if (M) [['works', M.works], ['examples', M.examples], ['records', M.records], ['members', M.members]].forEach(function (g) {
-      g[1].forEach(function (x) { if (x.image) imgs.push([g[0] + '（' + (x.title || x.name || '') + '）', x.image]); });
+      g[1].forEach(function (x) {
+        var who = g[0] + '（' + (x.title || x.name || '') + '）', seen = {};
+        [x.image].concat(x.shots || [], (x.photos || []).map(function (p) { return p.src; }), [].concat.apply([], (x.topics || []).map(function (tp) { return tp.body.map(function (b) { return b.img; }); })))
+          .forEach(function (u) { if (u && !seen[u]) { seen[u] = true; imgs.push([who, u]); } });
+      });
     });
     imgs.forEach(function (x) {
       var im = new Image();
@@ -392,7 +501,9 @@
   // いま開いているページを、別のことばで開きなおすためのアドレス。日本語に戻すときも ?lang=ja をつける（選んだことばをおぼえなおすため）
   function langHref(l) {
     var file = location.pathname.split('/').pop() || 'index.html';
-    return file + '?' + [demo ? 'demo' : '', 'lang=' + l].filter(Boolean).join('&') + location.hash;
+    var q = new URLSearchParams(location.search);   // ?id=w1 など、ほかの指定はそのまま残す（記録のページで、どの記録かがわからなくならないように）
+    q.set('lang', l);
+    return file + '?' + q.toString().replace(/=(&|$)/g, '$1') + location.hash;
   }
 
   // 訳してから、HTMLに入れても安全な形にする（ふつうの文はこれを使う。タグを含む文だけ t を使う）

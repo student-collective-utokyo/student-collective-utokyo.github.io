@@ -202,10 +202,10 @@ window.SITE_I18N.en = {
     'We’ll post what gets built on the spot at our workshops and Studio Hours. For now, here’s what the team has made.',
   '東大生がAIでつくった、':
     'Projects UTokyo students have built with AI:',
-  '{n}の作品。':
+  '{n}作品。':
     '{n} so far.',
-  '2026年10月からのワークショップとStudio Hoursで、その場で生まれた作品を並べています。':
-    'Projects built on the spot at our workshops and Studio Hours since October 2026.',
+  'ワークショップでその場で生まれた作品と、運営メンバーが自分でつくって使っている作品を並べています。':
+    'Projects built on the spot at our workshops, plus ones the team made and uses themselves.',
   '運営メンバーの作品':
     'Projects by the team',
   'Campus Leadが自分でつくって、使っているもの':
@@ -264,12 +264,12 @@ window.SITE_I18N.en = {
   // ── 作品と、作品の例（content.js の 5 と 5-2） ──
   '単語帳アプリ':
     'Flashcard app',
-  '覚え具合に合わせて出題する単語帳。自分と友達が使っています。':
-    'A flashcard app that quizzes you based on how well you remember each word. Used by me and my friends.',
+  '忘れそうなころに復習が出てくる、友達と続けられる単語帳。':
+    'A flashcard app that brings words back just before you forget them, and that you can keep up with friends.',
   '献立アプリ':
     'Meal-planning app',
-  '食べたいものを選んで、その日の献立を決めるアプリ。自分と友達が使っています。':
-    'An app for picking what you feel like eating and deciding the day’s menu. Used by me and my friends.',
+  '食べたいものを選んで注文してもらい、一緒に食べたら思い出に残せるアプリ。':
+    'Friends pick what they want to eat and place an order; after the meal, you keep it as a memory.',
   '駒場ランチ混雑マップ':
     'Komaba lunch crowd map',
   '食堂と周辺の店の混み具合を、時間帯ごとに色で見られるマップ':
@@ -502,8 +502,8 @@ window.SITE_I18N.en = {
     'Yes. Each session stands on its own, so coming once is fine. If you want to keep building, come to Studio Hours.',
   'どんなものがつくれますか。':
     'What kind of things can I build?',
-  'ウェブサイトやちょっとしたツール、ゲームなど、自分がほしいものをつくります。作品のページで、運営メンバーの作品と、つくれるものの例を見られます。':
-    'Websites, small tools, games—whatever you want for yourself. On the Projects page you can see projects by the team and examples of what you could build.',
+  'ウェブサイトやちょっとしたツール、ゲームなど、自分がほしいものをつくります。作品のページで、ワークショップでできた作品と、運営メンバーの作品を見られます。':
+    'Websites, small tools, games—whatever you want for yourself. On the Projects page you can see projects from our workshops and projects by the team.',
   '写真や、できた作品は公開されますか。':
     'Will photos and finished projects be made public?',
   'イベントの写真や、できた作品は、このサイトなどで公開することがあります。':
@@ -554,6 +554,111 @@ window.SITE_I18N.en = {
     ' · ',
   ' ／ ':
     ' / ',
+
+  // ── 作品（11/9 から：本物の作品） ──
+  'いつものSNSを1つの画面にまとめて、選んだものを一度に開けるページ。':
+    'A page that gathers the social apps you use every day in one place and opens the ones you pick all at once.',
+  'LINEやX、Instagram、YouTubeなど、ふだん使うSNSを1つの画面に並べておき、チェックを入れたものを一度に開けます。第1回でつくり始めて、今もつくり続けています。':
+    'Lay out the social apps you use—LINE, X, Instagram, YouTube and more—on one screen, then open every one you’ve checked in one go. Started at Workshop 1 and still in progress.',
+  'おみーの大冒険':
+    'Omii’s Big Adventure',
+  'キーボードで遊ぶ、横スクロールのアクションゲーム（β版）。':
+    'A side-scrolling action game you play with the keyboard (beta).',
+  'A・Dキーで移動、W・スペースでジャンプ。はじめる前に出てくる「利用規約への同意」から、もう遊び心たっぷりです。第1回でつくり始めて、今もつくり続けています。':
+    'Move with A and D, jump with W or Space. The playfulness starts before the game does, with a “terms of use” screen. Started at Workshop 1 and still in progress.',
+  '言の葉':
+    'Kotonoha',
+  'ふたりで書く交換日記。1日分の日記が、3Dの木の葉っぱ1枚になる。':
+    'A shared diary for two. Each day’s entry becomes one leaf on a 3D tree.',
+  '毎日ひとりで書くのは続かないので、人を巻きこんで書く交換日記にしました。日記は1日1枚の葉っぱになり、月ごとに枝、1年で1本の木に育ちます。3Dモデルをつくったことはなかったけれど、AIに任せてみたらできました。リンク先はデモ版で、架空のふたりの日記を見られます。':
+    'Writing a diary alone every day never lasted, so this became a diary you write together. Each day is a leaf, each month a branch, and a year grows into a whole tree. With no 3D modeling experience, the maker simply left it to AI—and it worked. The link is a demo with the diaries of two made-up people.',
+  '日課':
+    'Nikka',
+  'UTOLの課題と時間割を1つにまとめて、締切前に知らせてくれるアプリ。':
+    'An app that puts your UTOL assignments and timetable in one place and reminds you before deadlines.',
+  'いちばん上に、次の課題の締切までのカウントダウン。時間割から、授業ごとの課題も見られます。出していない課題は、締切の3日前の朝、24時間前、3時間前に通知が来ます。第1回のデモで、こういうアプリのつくり方を見せました。':
+    'At the top, a countdown to your next deadline. From the timetable you can see each class’s assignments. Anything not yet submitted triggers a reminder the morning three days before, 24 hours before, and 3 hours before it’s due. The Workshop 1 demo showed how to build an app like this.',
+  '友達がうちに食べに来る前に、メニューから食べたいものを選んで注文してもらえます。一緒に食べたあとは、写真で思い出に残せます。紹介の動画も、AIにつくってもらいました。自分と友達で使っています。':
+    'Before friends come over to eat, they choose what they’d like from the menu and place an order. After the meal, photos keep it as a memory. The intro video was made with AI too. Used by me and my friends.',
+  '覚え具合に合わせて、忘れそうなころに復習を出してくれる単語帳です。友達とチームで続けられて、自分が先に終わったら、まだの友達にリマインドを送れます。自分と友達で使っています。':
+    'A flashcard app that schedules reviews just before you’d forget. You can keep it up as a team with friends, and if you finish first you can send a nudge to the ones who haven’t. Used by me and my friends.',
+
+  // ── 前回のようす・活動記録のくわしいページ（11/9 から） ──
+  '前回のようす':
+    'Last time',
+  '{x}の記録を読む':
+    'Read the {x} recap',
+  'すべての記録':
+    'All recaps',
+  '記録を読む':
+    'Read the recap',
+  '最後に集合写真':
+    'Group photo at the end',
+  'ライブデモを見る':
+    'Watching the live demo',
+  'つくる時間のはじまり':
+    'Start of build time',
+  '会場のようす':
+    'Around the venue',
+  'はじめてのCodexで、約40人がほしいものをつくってみた。':
+    'First time with Codex: about 40 people built something they wanted.',
+  '参加者のほとんどが、Codexをはじめて使う回でした。前半の30分は、ChatGPTとのちがい、UTOLの課題を一覧にしてもらうデモ、6,000個のファイルの整理を見てもらいました。後半は、それぞれが自分のほしいものを、その場でつくる時間。SNSをまとめて開けるページや、ゲームも生まれました。':
+    'For most people, this was their first time using Codex. In the first 30 minutes we showed how it differs from ChatGPT, a demo that turned UTOL assignments into a list, and sorting a folder of 6,000 files. The rest of the time, everyone built what they wanted on the spot—including a page that opens all your social apps at once, and a game.',
+  '約{n}人':
+    'About {n}',
+  '日時':
+    'When',
+  '参加':
+    'Turnout',
+  '来られなかった人へ':
+    'If you missed it',
+  '自分でやってみる':
+    'Try it yourself',
+  '{n}ステップ':
+    '{n} steps',
+  '@活動記録は日本語だけです':
+    'The recap itself is in Japanese only.',
+  '画像を大きく見る':
+    'View larger',
+  '画像':
+    'Image',
+  '目次':
+    'Contents',
+  'コピー':
+    'Copy',
+  '全文を見る':
+    'Show all',
+  'たたむ':
+    'Show less',
+  'コピーしました。そのまま貼りつけて使えます。':
+    'Copied. You can paste it straight in.',
+  'コピーできませんでした。文章を長押しして選んでください。':
+    'Couldn’t copy. Press and hold the text to select it.',
+  '当日と同じ流れを、ひとりでも試せるようにまとめました。文章はそのままコピーして使えます。':
+    'The same flow as on the day, set out so you can try it on your own. Copy the text and use it as is.',
+  '{x}にもどる':
+    'Back to {x}',
+  'この記録は見つかりませんでした。':
+    'We couldn’t find this recap.',
+  '「活動記録」のページから、もう一度選んでください。':
+    'Please choose it again from the Recaps page.',
+
+  // ── 作品のくわしい表示（スクリーンショットを送る帯） ──
+  'リンクあり':
+    'Has a link',
+  '{x}の記録を見る':
+    'See the {x} recap',
+  '前の画像':
+    'Previous image',
+  '次の画像':
+    'Next image',
+  '{n}枚目':
+    'Image {n}',
+
+  '画像を大きく見る：{x}':
+    'View larger: {x}',
+  '参加者':
+    'Participant',
   '｜':
     ' | ',
   '　':

@@ -78,11 +78,12 @@
       '<div class="nx-act">' + apply + cal + '</div>' + S.langNote();
   }
 
-  // 今学期の予定
+  // 今学期の予定。終わった回のうち、くわしい記録がある回の行は、その記録へ
   function board(M) {
     function row(o) {
       var inner = '<span class="nx-d' + (o.num ? '' : ' nx-tx') + '">' + esc(o.d) + (o.num ? '<small>' + o.dow + '</small>' : '') + '</span>' +
         '<span><span class="nx-n">' + esc(o.name) + '</span>' + (o.sub ? '<br><span class="nx-s">' + esc(o.sub) + '</span>' : '') + '</span>';
+      if (o.href) return '<a class="nx-row nx-done" href="' + esc(o.href) + '">' + inner + '<span class="nx-r">' + esc(o.right || '') + U.CHEV + '</span></a>';   // 記録がある回は、その記録へ
       if (o.to) return S.go(o.to, 'nx-row' + (o.done ? ' nx-done' : ''), inner + '<span class="nx-r">' + esc(o.right || '') + U.CHEV + '</span>');
       if (o.next) return '<div class="nx-row nx-next">' + inner + '<span class="nx-r">' + T('次回') + '</span></div>';
       return '<div class="nx-row' + (o.done ? ' nx-done' : '') + '">' + inner + '<span class="nx-r"></span></div>';
@@ -91,7 +92,8 @@
       return {
         kind: e.kind, num: !!e.date, d: e.date ? e.date.md : (e.when || t('調整中')), dow: e.date ? e.date.dow : '',
         name: e.name, sub: e.sub, done: e.state === 'done', next: e.state === 'next',
-        to: e.state === 'done' ? 'records' : '', right: e.people ? t('{n}人', { n: e.people }) : ''
+        to: e.state === 'done' ? 'records' : '', right: e.peopleText,
+        href: e.state === 'done' && e.id && M.records.some(function (r) { return r.page && r.id === e.id; }) ? U.recHref(e.id) : ''
       };
     });
     // Studio Hours の行は、ショーケースの前（なければ最後）に入れる
@@ -130,13 +132,40 @@
       '<div class="osc-gh nx-wide" style="--nx-span:' + Math.max(2, 6 - used) + '"><p>' + T('{x}の作品はここに並びます。', { x: first && first.short ? first.short : t('ワークショップ') }) + '<small>' + T('ワークショップでできた作品を、ここに載せていきます。') + '</small></p></div></div>';
   }
 
+  /* 前回のようす。いちばん新しい「終わった回」に、くわしい記録（content.js の records で summary と topics を書いたもの）があるときだけ、
+     「活動記録」の列のかわりに、作品より上に出す。
+     左：当日の写真を順に送る（指でずらせる。1枚目は photos のいちばん上）。右：この回でやったことのまとめと、記録へのボタン。 */
+  function lastRecord(M) {
+    var done = M.events.filter(function (e) { return e.state === 'done'; }), ev = done[done.length - 1];
+    if (!ev || !ev.id) return null;
+    var r = M.records.filter(function (x) { return x.page && x.summary && x.id === ev.id; })[0];
+    return r ? { r: r, ev: ev } : null;
+  }
+  function recent(M) {
+    var hit = lastRecord(M);
+    if (!hit) return '';
+    var R = hit.r, ev = hit.ev;
+    var when = (ev.short || ev.name) + (ev.date ? t(' ・ ') + ev.date.long : '');
+    var facts = [ev.place, ev.peopleText].filter(Boolean);
+    return '<div class="nx-rc">' +
+      (R.photos.length ? U.slides(R.photos, { cls: 'nx-rc-sl' }) : '') +
+      '<div class="nx-rc-main"><p class="nx-rc-k"><span>' + T('前回のようす') + '</span>' + esc(when) + '</p>' +
+      '<h2>' + (Site.lang === 'ja' && R.titleLines.length ? U.lines(R.titleLines) : esc(R.title)) + '</h2>' +
+      '<p class="nx-rc-p">' + esc(R.summary) + '</p>' +
+      (facts.length ? '<p class="nx-rc-f">' + facts.map(esc).join('<i></i>') + '</p>' : '') +
+      '<div class="nx-rc-act"><a class="osc-btn osc-btn-1 nx-rc-b" href="' + esc(U.recHref(R.id)) + '">' + T('{x}の記録を読む', { x: ev.short || ev.name }) + U.CHEV + '</a>' +
+      S.go('records', 'osc-lnk nx-rc-all', T('すべての記録') + U.CHEV) + '</div></div></div>';
+  }
+
   // 活動記録
   function records(M) {
     if (M.records.length) {
       return '<div class="osc-sh"><h2>' + T('活動記録') + '<small>' + T('{n}件', { n: M.records.length }) + '</small></h2>' + S.go('records', 'osc-lnk', T('すべて見る') + U.CHEV) + '</div>' +
         '<div class="nx-recs">' + M.records.slice(0, 3).map(function (r) {
-          return S.go('records', 'nx-rec', (r.image ? '<img src="' + esc(r.image) + '" alt="" loading="lazy" style="object-position:' + esc(r.focus) + '">' : '') +
-            '<span class="nx-rec-dt">' + (r.date ? '<span>' + r.date.long + '</span>' : '') + '<span>' + esc(r.label) + '</span></span><span class="nx-rec-tt">' + esc(r.title) + '</span>');
+          var inner = (r.image ? '<img src="' + esc(r.image) + '" alt="" loading="lazy" style="object-position:' + esc(r.focus) + '">' : '') +
+            '<span class="nx-rec-dt">' + (r.date ? '<span>' + r.date.long + '</span>' : '') + '<span>' + esc(r.label) + '</span></span><span class="nx-rec-tt">' + esc(r.title) + '</span>';
+          // くわしいページがある記録は、そのページへ〔評審P2〕
+          return r.page ? '<a class="nx-rec" href="' + esc(U.recHref(r.id)) + '">' + inner + '</a>' : S.go('records', 'nx-rec', inner);
         }).join('') + '</div>';
     }
     var first = M.events.filter(function (e) { return e.state !== 'done'; })[0];
@@ -145,16 +174,18 @@
   }
 
   Site.views.next = function (M, root) {
-    var b = board(M), f = facts(M);
+    var b = board(M), f = facts(M), os = recent(M);
     root.innerHTML =
       '<div class="nx-top osc-grain' + (f ? '' : ' nx-nofacts') + '"><div class="nx-wrap">' +
       '<section class="nx-hero"><div>' + hero(M) + '</div><aside class="nx-board" aria-label="' + T('今学期の予定') + '">' + b + '</aside></section></div></div>' +
       '<div class="nx-wrap">' + f +
       '<aside class="nx-board nx-m" aria-label="' + T('今学期の予定') + '">' + b + '</aside>' +
+      (os ? '<section class="nx-peek nx-rc-s" id="recent" aria-label="' + T('前回のようす') + '">' + os + '</section>' : '') +
       '<section class="nx-peek">' + works(M) + '</section>' +
-      '<section class="nx-peek">' + records(M) + '</section>' +
+      (os ? '' : '<section class="nx-peek">' + records(M) + '</section>') +
       '<footer id="ft"></footer></div>';
     S.mount('next');
     S.cta(M.next);
+    U.wireSlides(root);
   };
 })();

@@ -147,3 +147,44 @@ img.osc-mono{display:inline-block;object-fit:cover}   /* 写真のとき */
 .osc-grain{position:relative;isolation:isolate}
 .osc-grain::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.42;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>")}
+
+/* ── 作品に外のリンクがあるときだけ出る小さな印（カードの絵の右上） ── */
+.osc-wkc,.ws-tile{position:relative}
+.osc-lk{position:absolute;top:8px;right:8px;z-index:2;display:inline-flex;align-items:center;gap:3px;height:24px;padding:0 9px 0 7px;border-radius:999px;background:rgba(255,255,255,.94);color:#14162B;font-size:11.5px;font-weight:700;letter-spacing:.01em;box-shadow:0 4px 12px -4px rgba(20,22,43,.35),0 0 0 1px rgba(20,22,43,.06);pointer-events:none;white-space:nowrap}
+.osc-lk svg{width:12px;height:12px;color:#0A7CF0}
+
+/* ── 画像を横に送る帯（スライド）。指でずらせて、さわらなければ自動で次へ ── */
+.osc-sl{position:relative;border-radius:14px;overflow:hidden;background:var(--sl-bg,#EEF1F5);outline:none}
+.osc-sl-vp{overflow:hidden;touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.osc-sl-vp:active{cursor:grabbing}
+.osc-sl-tr{display:flex;transition:transform .6s cubic-bezier(.22,.72,.18,1);will-change:transform}
+.osc-sl-i{flex:0 0 100%;margin:0;position:relative;aspect-ratio:var(--sl-ar,16 / 10)}
+.osc-sl-i img{display:block;width:100%;height:100%;object-fit:var(--sl-fit,contain);pointer-events:none}
+.osc-sl-i figcaption{position:absolute;left:12px;bottom:34px;background:rgba(20,22,43,.62);color:#fff;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.osc-sl-btn{position:absolute;top:50%;width:38px;height:38px;margin-top:-19px;border-radius:50%;background:rgba(255,255,255,.94);color:#14162B;display:grid;place-items:center;box-shadow:0 6px 16px -6px rgba(20,22,43,.45);opacity:0;transition:opacity .2s}
+.osc-sl-btn svg{width:16px;height:16px}
+.osc-sl-prev{left:10px}.osc-sl-next{right:10px}
+.osc-sl:hover .osc-sl-btn,.osc-sl:focus-within .osc-sl-btn{opacity:1}
+@media (hover:none){.osc-sl-btn{display:none}}
+.osc-sl-dots{position:absolute;left:0;right:0;bottom:8px;display:flex;justify-content:center;gap:2px;pointer-events:none}
+.osc-sl-dots button{pointer-events:auto;padding:6px 3px;display:grid;place-items:center}
+.osc-sl-dots i{position:relative;display:block;width:7px;height:7px;border-radius:999px;background:var(--sl-dot,rgba(20,22,43,.22));overflow:hidden;transition:width .35s}
+.osc-sl-dots .on i{width:24px;background:var(--sl-dot,rgba(20,22,43,.22))}
+.osc-sl-dots .on i::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--sl-on,#14162B)}
+/* 自動で送るときは、点の中の線が少しずつのびて、次に移るまでの時間を見せる */
+.osc-sl-auto.osc-sl-run .osc-sl-dots .on i::after{transform-origin:left;animation:osc-sl-fill 4.5s linear forwards}
+.osc-sl-hold .osc-sl-dots .on i::after{animation-play-state:paused}
+@keyframes osc-sl-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){.osc-sl-tr{transition:none}}
+
+/* 作品のくわしい表示：スクリーンショットの帯があるときは、少し広く */
+@media (min-width:641px){ .osc-sheet:has(.osc-wk-sl){width:min(92vw,760px)} }
+/* 点は絵の下に出す（絵の上だと、スクリーンショットの文字と重なる） */
+.osc-wk .osc-wk-sl{--sl-bg:transparent;overflow:visible;padding-bottom:22px;border-radius:0}
+.osc-wk .osc-wk-sl.osc-sl-one{padding-bottom:0}   /* 1枚だけのときは点がないので、下をあけない */
+.osc-mono-p{display:inline-grid;place-items:center;background:#E7E8EE;color:#5d5f70}
+.osc-mono-p svg{width:62%;height:62%}
+.osc-wk-sl .osc-sl-vp{border-radius:12px;background:#EEF1F5;box-shadow:inset 0 0 0 1px rgba(20,22,43,.08)}
+.osc-wk-sl .osc-sl-dots{bottom:-4px}
+.osc-wk-sl .osc-sl-btn{margin-top:-30px}
+.osc-wk-go svg{width:14px;height:14px;margin-left:6px}

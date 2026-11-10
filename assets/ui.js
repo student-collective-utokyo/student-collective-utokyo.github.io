@@ -104,11 +104,128 @@
 
   // 人の小さな丸。運営メンバーで写真があるときは写真を、ないときは名前の最初の1文字を入れる
   var MONO = ['#E3DAF6', '#D5F0DF', '#F3EFB5', '#D6E9FD', '#FBD9E1', '#FCE6CF'];
+  var PERSON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6"/></svg>';
   function mono(name) {
+    if (name === '参加者') return '<span class="osc-mono osc-mono-p">' + PERSON + '</span>';
     var who = ((Site.M && Site.M.members) || []).filter(function (m) { return m.name === name && m.image; })[0];
     if (who) return '<img class="osc-mono" src="' + esc(who.image) + '" alt="">';
     var first = Array.from(name)[0] || '';   // 「𠮷」のような字も1文字として取り出す
     return '<span class="osc-mono" style="background:' + MONO[(name.charCodeAt(0) || 0) % MONO.length] + '">' + esc(first) + '</span>';
+  }
+
+  // ── 記録のページのアドレス（record.html?id=w1#t-show のように）。?demo や ?lang=… はそのまま引きつぐ ──
+  function recHref(id, hash) {
+    var h = Site.href('record.html'), q = 'id=' + encodeURIComponent(id);
+    return (h.indexOf('?') < 0 ? h + '?' + q : h.replace('?', '?' + q + '&')) + (hash ? '#' + hash : '');
+  }
+
+  // ── 作品に外のリンクがあるときだけ出す、小さな印。ないときは何も出さない ──
+  var OUT = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l5-5M6.5 5H11v4.5"/></svg>';
+  var CHAIN = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.8 9.2a2.6 2.6 0 0 0 3.7 0l2.2-2.2a2.6 2.6 0 0 0-3.7-3.7l-.9.9"/><path d="M9.2 6.8a2.6 2.6 0 0 0-3.7 0L3.3 9a2.6 2.6 0 0 0 3.7 3.7l.9-.9"/></svg>';
+  function linkPill(w) { return w.url ? '<span class="osc-lk">' + CHAIN + T('リンクあり') + '</span>' : ''; }
+
+  /* ── 画像を横に並べて、指でずらしたり、自動で送ったりする帯（スライド） ──
+     list：画像のアドレスか {src, cap, focus} の並び。
+     o.cls：外側に足すクラス　o.auto：false で自動で送らない
+     組み立てたあとで wireSlides(入れた場所) を呼ぶと動き出す */
+  var CL = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>';
+  var CR = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg>';
+  function slides(list, o) {
+    o = o || {};
+    if (!list || !list.length) return '';
+    var many = list.length > 1;
+    return '<div class="osc-sl' + (o.cls ? ' ' + o.cls : '') + (many ? '' : ' osc-sl-one') + '" data-sl' + (o.auto === false ? '' : ' data-auto') + ' tabindex="-1" aria-roledescription="carousel">' +
+      '<div class="osc-sl-vp"><div class="osc-sl-tr">' + list.map(function (x, i) {
+        var src = typeof x === 'string' ? x : x.src, cap = typeof x === 'string' ? '' : (x.cap || ''), focus = typeof x === 'string' ? '' : (x.focus || '');
+        return '<figure class="osc-sl-i"><img src="' + esc(src) + '" alt="' + esc(cap) + '" draggable="false"' + (i ? ' loading="lazy"' : '') + (focus ? ' style="object-position:' + esc(focus) + '"' : '') + '>' +
+          (cap ? '<figcaption>' + esc(cap) + '</figcaption>' : '') + '</figure>';
+      }).join('') + '</div></div>' +
+      (many ? '<button type="button" class="osc-sl-btn osc-sl-prev" aria-label="' + T('前の画像') + '">' + CL + '</button>' +
+        '<button type="button" class="osc-sl-btn osc-sl-next" aria-label="' + T('次の画像') + '">' + CR + '</button>' +
+        '<div class="osc-sl-dots">' + list.map(function (x, i) { return '<button type="button" aria-label="' + T('{n}枚目', { n: i + 1 }) + '"' + (i ? '' : ' class="on" aria-current="true"') + '><i></i></button>'; }).join('') + '</div>' : '') +
+      '</div>';
+  }
+  var SL_MS = 4500;   // 自動で次へ送るまでの時間
+  function wireSlides(root) {
+    [].forEach.call((root || document).querySelectorAll('[data-sl]:not([data-sl-on])'), function (el) {
+      el.setAttribute('data-sl-on', '');
+      var vp = el.querySelector('.osc-sl-vp'), tr = el.querySelector('.osc-sl-tr'), n = tr.children.length;
+      if (n < 2) return;
+      var dots = el.querySelectorAll('.osc-sl-dots button'), i = 0, timer = null, hover = false, dragging = false, moved = false, x0 = 0, y0 = 0, dx = 0;
+      var auto = el.hasAttribute('data-auto') && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if (auto) el.classList.add('osc-sl-auto');
+      function go(k) {
+        i = (k + n) % n;
+        tr.style.transform = 'translateX(' + (-i * 100) + '%)';
+        [].forEach.call(dots, function (d, j) {
+          d.classList.toggle('on', j === i);
+          if (j === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+        });
+      }
+      function start() {
+        clearInterval(timer); timer = null;
+        if (!auto) return;
+        // 押したときは、そこから数えなおす（点の中の線も、はじめから）
+        el.classList.remove('osc-sl-run'); void el.offsetWidth; el.classList.add('osc-sl-run');
+        timer = setInterval(function () {
+          if (!el.isConnected || (el.closest('.osc-sheet') && !el.closest('.osc-sheet.on'))) { clearInterval(timer); return; }   // 消えた・閉じたパネルの中なら止める〔評審P2〕
+          if (hover || dragging || document.hidden) return;
+          go(i + 1); el.classList.remove('osc-sl-run'); void el.offsetWidth; el.classList.add('osc-sl-run');
+        }, SL_MS);
+      }
+      // マウスをのせているあいだ、キーボードで中を選んでいるあいだは止める。離れたら、そこから数えなおす〔評審P2〕
+      var inside = { mouse: false, focus: false };
+      function pause(k, on) {
+        inside[k] = on; var was = hover; hover = inside.mouse || inside.focus;
+        el.classList.toggle('osc-sl-hold', hover);
+        if (was && !hover) start();
+      }
+      el.addEventListener('click', function (e) {
+        var b = e.target.closest('.osc-sl-prev,.osc-sl-next,.osc-sl-dots button');
+        if (!b) return;
+        if (b.classList.contains('osc-sl-prev')) go(i - 1);
+        else if (b.classList.contains('osc-sl-next')) go(i + 1);
+        else go([].indexOf.call(dots, b));
+        start();
+      });
+      el.addEventListener('mouseenter', function () { pause('mouse', true); });
+      el.addEventListener('mouseleave', function () { pause('mouse', false); });
+      el.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) pause('focus', true); });   // キーボードで入ったときだけ（マウスで押しただけでは止めない）
+      el.addEventListener('focusout', function (e) { if (!el.contains(e.relatedTarget)) pause('focus', false); });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') { go(i - 1); start(); }
+        else if (e.key === 'ArrowRight') { go(i + 1); start(); }
+      });
+      // 指（またはマウス）でずらす。縦に動かしたときは、ページのスクロールにまかせる
+      vp.addEventListener('pointerdown', function (e) {
+        if (e.button) return;
+        dragging = true; moved = false; x0 = e.clientX; y0 = e.clientY; dx = 0;
+        tr.style.transition = 'none';
+        if (e.pointerType === 'mouse' && vp.setPointerCapture) try { vp.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+      vp.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        dx = e.clientX - x0;
+        if (!moved && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - y0)) { moved = true; if (vp.setPointerCapture) try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+        if (moved) tr.style.transform = 'translateX(calc(' + (-i * 100) + '% + ' + dx + 'px))';
+      });
+      function end() {
+        if (!dragging) return;
+        dragging = false; tr.style.transition = '';
+        if (moved && Math.abs(dx) > Math.min(60, vp.clientWidth * .15)) go(dx < 0 ? i + 1 : i - 1); else go(i);
+        start();
+      }
+      vp.addEventListener('pointerup', end);
+      vp.addEventListener('pointercancel', end);
+      vp.addEventListener('lostpointercapture', function () {
+        end();
+        // 押したまま枠の外で離すと「マウスが離れた」が来ないので、つかみ終わったあとで、マウスがいまどこにあるかを見なおす
+        setTimeout(function () { if (inside.mouse && !el.matches(':hover')) pause('mouse', false); }, 0);
+      });
+      // ずらしたあとに続けて来る click（画像を大きくする、など）は止める
+      vp.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+      start();
+    });
   }
 
   // ── 作品のくわしい表示 ──
@@ -117,13 +234,23 @@
     if (!w) return;
     var acts = '';
     if (M.demo) acts += '<button class="osc-wk-go" data-toast="' + T('サンプルのため、作品のリンクはありません。') + '">' + T('作品を開く') + '</button>';
-    else if (w.url) acts += '<a class="osc-wk-go" href="' + esc(w.url) + '" target="_blank" rel="noopener">' + T('作品を開く') + '</a>';
-    if (w.byEvent && M.records.length) acts += Site.shell.go('records', 'osc-wk-sub', T('活動記録を見る'));
-    openSheet('<div class="osc-wk">' + thumb(w) + '<h3>' + esc(w.title) + '</h3><p class="osc-wk-desc">' + esc(w.about) + '</p><dl>' +
-      '<dt>' + T('つくった人') + '</dt><dd>' + (w.makerNote ? T('{a}（{b}）', { a: w.maker, b: w.makerNote }) : esc(w.maker)) + '</dd>' +
+    else if (w.url) acts += '<a class="osc-wk-go" href="' + esc(w.url) + '" target="_blank" rel="noopener">' + T('作品を開く') + OUT + '</a>';
+    // この作品を紹介している記録があれば、その見出しへ。なければ、イベントの作品は「活動記録」の一覧へ
+    var rec = null, sec = null;
+    M.records.forEach(function (r) {
+      if (rec || !r.page) return;
+      var hit = r.topics.filter(function (tp) { return tp.body.some(function (b) { return b.works && b.works.indexOf(w.id) >= 0; }); })[0];
+      if (hit || (w.byEvent && r.id === w.from)) { rec = r; sec = hit; }
+    });
+    if (rec) acts += '<a class="osc-wk-sub" href="' + esc(recHref(rec.id, sec ? sec.id : '')) + '">' + T('{x}の記録を見る', { x: rec.label || rec.title }) + '</a>';
+    else if (w.byEvent && M.records.length) acts += Site.shell.go('records', 'osc-wk-sub', T('活動記録を見る'));
+    var pics = w.shots && w.shots.length ? slides(w.shots, { cls: 'osc-wk-sl' }) : thumb(w);
+    openSheet('<div class="osc-wk">' + pics + '<h3>' + esc(w.title) + '</h3><p class="osc-wk-desc">' + esc(w.detail || w.about) + '</p><dl>' +
+      '<dt>' + T('つくった人') + '</dt><dd>' + (w.makerNote ? T('{a}（{b}）', { a: w.makerText || w.maker, b: w.makerNote }) : esc(w.makerText || w.maker)) + '</dd>' +
       (w.byEvent && w.fromLabel ? '<dt>' + T('つくった回') + '</dt><dd>' + esc(w.fromLabel) + '</dd>' : '') +
       (w.tool ? '<dt>' + T('使ったもの') + '</dt><dd>' + esc(w.tool) + '</dd>' : '') +
       '</dl>' + (acts ? '<div class="osc-wk-acts">' + acts + '</div>' : '') + '</div>', w.title);
+    wireSlides(sheet);
   }
 
   // ── 作品の例のくわしい表示。実際の作品ではないことを、はっきり書く ──
@@ -191,7 +318,10 @@
     var jump = e.target.closest('a[href*="#"]');
     if (jump && jump.hash && jump.origin === location.origin && jump.pathname === location.pathname && jump.search === location.search && jump.target !== '_blank') {
       e.preventDefault();
-      jumpTo(jump.hash.slice(1), true);
+      if (jump.closest('.osc-sheet')) closeSheet();
+      var to = jump.hash.slice(1);
+      try { to = decodeURIComponent(to); } catch (err) { /* そのまま使う */ }
+      jumpTo(to, true);
     }
   });
   // div で作ったボタンを、キーボードでも押せるようにする
@@ -199,5 +329,5 @@
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"]')) { e.preventDefault(); e.target.click(); }
   });
 
-  Site.ui = { toast: toast, openSheet: openSheet, closeSheet: closeSheet, thumb: thumb, mono: mono, openWork: openWork, jumpTo: jumpTo, phrase: phrase, lines: lines, CHEV: CHEV };
+  Site.ui = { toast: toast, openSheet: openSheet, closeSheet: closeSheet, thumb: thumb, mono: mono, openWork: openWork, recHref: recHref, linkPill: linkPill, slides: slides, wireSlides: wireSlides, jumpTo: jumpTo, phrase: phrase, lines: lines, CHEV: CHEV };
 })();

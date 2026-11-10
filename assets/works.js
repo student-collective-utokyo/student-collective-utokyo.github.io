@@ -46,9 +46,9 @@
      big が true のときは、2列ぶんの大きなカードにして「ピックアップ」の印をつける。 */
   function tile(w, plain, big) {
     var tag = [plain ? '' : w.fromShort, w.tool].filter(Boolean).map(esc).join(t(' ・ '));
-    return '<div class="ws-tile' + (big ? ' ws-big' : '') + '" role="button" tabindex="0" data-work="' + esc(w.id) + '" aria-label="' + esc(w.title) + '">' + U.thumb(w) +
+    return '<div class="ws-tile' + (big ? ' ws-big' : '') + '" role="button" tabindex="0" data-work="' + esc(w.id) + '" aria-label="' + esc(w.title) + '">' + U.thumb(w) + U.linkPill(w) +
       '<span class="ws-tx">' + (big ? '<span class="ws-pk">' + T('ピックアップ') + '</span>' : '') + '<span class="ws-tt">' + esc(w.title) + '</span>' + (w.about ? '<span class="ws-ds">' + esc(w.about) + '</span>' : '') +
-      '<span class="ws-by' + (plain || big ? '' : ' ws-by2') + '">' + U.mono(w.maker) + '<span class="ws-nm">' + esc(w.maker) + '</span>' +
+      '<span class="ws-by' + (plain || big ? '' : ' ws-by2') + '">' + U.mono(w.maker) + '<span class="ws-nm">' + esc(w.makerText || w.maker) + '</span>' +
       (w.makerNote ? '<span class="ws-af">' + esc(w.makerNote) + '</span>' : '') + (tag ? '<span class="ws-tg">' + tag + '</span>' : '') + '</span></span></div>';
   }
   // 準備中の作品の枠

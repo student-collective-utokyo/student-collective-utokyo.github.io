@@ -83,6 +83,26 @@ button.nx-row:hover,a.nx-row:hover{background:rgba(20,22,43,.05)}
 .nx-rec:hover .nx-rec-tt{text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1.5px}
 .nx-recs .osc-gh{grid-column:1 / -1;padding:34px 20px}
 
+/* 前回のようす：左に当日の写真（順に送る）、右にこの回でやったこと */
+.nx-rc{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);background:#fff;border:1px solid rgba(20,22,43,.08);border-radius:22px;overflow:hidden}
+/* 写真の高さは右の文に合わせる（縦長の写真があっても、枠がのびないように、写真の層は枠いっぱいに重ねる） */
+.nx-rc-sl{border-radius:0;--sl-bg:#1b1d2e;--sl-fit:cover;--sl-dot:rgba(255,255,255,.45);--sl-on:#fff;min-height:420px}
+.nx-rc-sl .osc-sl-vp{position:absolute;inset:0}
+.nx-rc-sl .osc-sl-tr{height:100%}
+.nx-rc-sl .osc-sl-i{aspect-ratio:auto;height:100%}
+.nx-rc-sl .osc-sl-i figcaption{bottom:38px}
+.nx-rc-main{padding:34px 36px 30px;display:flex;flex-direction:column}
+.nx-rc:not(:has(.nx-rc-sl)){grid-template-columns:1fr}   /* 写真を書いていない記録のとき */
+.nx-rc-k{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:14px;font-weight:700;color:var(--mute)}
+.nx-rc-k span{background:var(--ink);color:#fff;font-size:12.5px;border-radius:999px;padding:3px 12px}
+.nx-rc h2{font-size:28px;line-height:1.45;font-weight:700;margin-top:12px;text-wrap:balance}
+.nx-rc-p{font-size:15.5px;line-height:1.95;color:var(--body);margin-top:12px}
+.nx-rc-f{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:13.5px;font-weight:700;color:var(--mute);margin-top:14px}
+.nx-rc-f i{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.6}
+.nx-rc-act{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:auto;padding-top:22px}
+.nx-rc-b{height:50px;padding:0 24px;font-size:15.5px}
+.nx-rc-b svg{width:14px;height:14px}
+
 @media (max-width:1180px){
   .nx-hero{grid-template-columns:1fr 400px;gap:32px}
   .nx-date b{font-size:150px}
@@ -139,5 +159,14 @@ button.nx-row:hover,a.nx-row:hover{background:rgba(20,22,43,.05)}
   .nx-strip .nx-wide small{display:none}
   .nx-recs{grid-template-columns:1fr;gap:20px}
   .nx-recs .osc-gh{padding:26px 16px}
+  /* 前回のようす：写真を上に、文を下に */
+  .nx-rc{display:block;border-radius:18px}
+  .nx-rc-sl{min-height:0;aspect-ratio:4 / 3}
+  .nx-rc-main{padding:20px 16px 18px}
+  .nx-rc h2{font-size:21px;margin-top:10px}
+  .nx-rc-p{font-size:14.5px;line-height:1.9;margin-top:10px}
+  .nx-rc-act{padding-top:18px}
+  .nx-rc-b{flex:1 1 100%}
+  .nx-rc-all{margin:0 auto}
 }
 @media (min-width:861px){ .nx-board.nx-m{display:none} }

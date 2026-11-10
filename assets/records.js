@@ -30,16 +30,18 @@
   function stamp(r) {
     return [r.label, r.date ? r.date.long : ''].filter(Boolean).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('');
   }
-  // いちばん新しい記録：写真を大きく出す
+  // いちばん新しい記録：写真を大きく出す。くわしいページがある記録（content.js で topics を書いたもの）は、押すとそのページへ
   function lead(r) {
-    return '<article class="rc-lead">' +
+    var tag = r.page ? 'a' : 'article';
+    return '<' + tag + ' class="rc-lead' + (r.page ? ' rc-link' : '') + '"' + (r.page ? ' href="' + esc(U.recHref(r.id)) + '"' : '') + '>' +
       (r.image ? '<figure><img src="' + esc(r.image) + '" alt="" style="object-position:' + esc(r.focus) + '"></figure>' : '') +
-      '<p class="rc-kick">' + stamp(r) + '</p><h2>' + esc(r.title) + '</h2></article>';
+      '<p class="rc-kick">' + stamp(r) + '</p><h2>' + esc(r.title) + '</h2>' + (r.page ? '<span class="rc-more">' + T('記録を読む') + ARROW + '</span>' : '') + '</' + tag + '>';
   }
   // それより前の記録：1行ずつ
   function item(r) {
-    return '<div class="rc-it"><div><p class="rc-dt">' + stamp(r) + '</p><p class="rc-tt">' + esc(r.title) + '</p></div>' +
-      (r.image ? '<img src="' + esc(r.image) + '" alt="" loading="lazy" style="object-position:' + esc(r.focus) + '">' : '') + '</div>';
+    var tag = r.page ? 'a' : 'div';
+    return '<' + tag + ' class="rc-it' + (r.page ? ' rc-link' : '') + '"' + (r.page ? ' href="' + esc(U.recHref(r.id)) + '"' : '') + '><div><p class="rc-dt">' + stamp(r) + '</p><p class="rc-tt">' + esc(r.title) + '</p></div>' +
+      (r.image ? '<img src="' + esc(r.image) + '" alt="" loading="lazy" style="object-position:' + esc(r.focus) + '">' : '') + '</' + tag + '>';
   }
 
   Site.views.records = function (M, root) {
