@@ -151,11 +151,13 @@
       el.setAttribute('data-sl-on', '');
       var vp = el.querySelector('.osc-sl-vp'), tr = el.querySelector('.osc-sl-tr'), n = tr.children.length;
       if (n < 2) return;
-      var dots = el.querySelectorAll('.osc-sl-dots button'), i = 0, timer = null, hover = false, dragging = false, moved = false, x0 = 0, y0 = 0, dx = 0;
+      var dots = el.querySelectorAll('.osc-sl-dots button'), i = 0, timer = null, hover = false, dragging = false, moved = false, x0 = 0, y0 = 0, dx = 0, lastX = 0, lastT = 0, vel = 0, downT = 0;
       var auto = el.hasAttribute('data-auto') && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
       if (auto) el.classList.add('osc-sl-auto');
-      function go(k) {
+      // fast：指で送ったあとは、すばやく収まる
+      function go(k, fast) {
         i = (k + n) % n;
+        tr.style.transition = fast ? 'transform .32s cubic-bezier(.2,.7,.2,1)' : '';
         tr.style.transform = 'translateX(' + (-i * 100) + '%)';
         [].forEach.call(dots, function (d, j) {
           d.classList.toggle('on', j === i);
@@ -168,12 +170,12 @@
         // 押したときは、そこから数えなおす（点の中の線も、はじめから）
         el.classList.remove('osc-sl-run'); void el.offsetWidth; el.classList.add('osc-sl-run');
         timer = setInterval(function () {
-          if (!el.isConnected || (el.closest('.osc-sheet') && !el.closest('.osc-sheet.on'))) { clearInterval(timer); return; }   // 消えた・閉じたパネルの中なら止める〔評審P2〕
+          if (!el.isConnected || (el.closest('.osc-sheet') && !el.closest('.osc-sheet.on'))) { clearInterval(timer); return; }   // 消えた・閉じたパネルの中なら止める
           if (hover || dragging || document.hidden) return;
           go(i + 1); el.classList.remove('osc-sl-run'); void el.offsetWidth; el.classList.add('osc-sl-run');
         }, SL_MS);
       }
-      // マウスをのせているあいだ、キーボードで中を選んでいるあいだは止める。離れたら、そこから数えなおす〔評審P2〕
+      // マウスをのせているあいだ、キーボードで中を選んでいるあいだは止める。離れたら、そこから数えなおす
       var inside = { mouse: false, focus: false };
       function pause(k, on) {
         inside[k] = on; var was = hover; hover = inside.mouse || inside.focus;
@@ -188,36 +190,46 @@
         else go([].indexOf.call(dots, b));
         start();
       });
-      el.addEventListener('mouseenter', function () { pause('mouse', true); });
-      el.addEventListener('mouseleave', function () { pause('mouse', false); });
+      // マウスだけを見る（スマホで指で触ったあとに来る「マウスがのった」は数えない。数えると、ずっと止まったままになる）
+      el.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') pause('mouse', true); });
+      el.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') pause('mouse', false); });
       el.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) pause('focus', true); });   // キーボードで入ったときだけ（マウスで押しただけでは止めない）
       el.addEventListener('focusout', function (e) { if (!el.contains(e.relatedTarget)) pause('focus', false); });
       el.addEventListener('keydown', function (e) {
         if (e.key === 'ArrowLeft') { go(i - 1); start(); }
         else if (e.key === 'ArrowRight') { go(i + 1); start(); }
       });
-      // 指（またはマウス）でずらす。縦に動かしたときは、ページのスクロールにまかせる
+      // 指（またはマウス）でずらす。縦に動かしたときは、ページのスクロールにまかせる（touch-action: pan-y）
       vp.addEventListener('pointerdown', function (e) {
         if (e.button) return;
-        dragging = true; moved = false; x0 = e.clientX; y0 = e.clientY; dx = 0;
+        dragging = true; moved = false; x0 = lastX = e.clientX; y0 = e.clientY; dx = 0; vel = 0; lastT = e.timeStamp; downT = performance.now();
         tr.style.transition = 'none';
+        // マウスは、枠の外で離しても終われるように、ここでつかむ。指は、ブラウザがはじめからつかんでいるので、なにもしない
         if (e.pointerType === 'mouse' && vp.setPointerCapture) try { vp.setPointerCapture(e.pointerId); } catch (err) {}
       });
       vp.addEventListener('pointermove', function (e) {
         if (!dragging) return;
         dx = e.clientX - x0;
-        if (!moved && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - y0)) { moved = true; if (vp.setPointerCapture) try { vp.setPointerCapture(e.pointerId); } catch (err) {} }
+        var dt = e.timeStamp - lastT;
+        if (dt > 0) { vel = 0.6 * ((e.clientX - lastX) / dt) + 0.4 * vel; lastX = e.clientX; lastT = e.timeStamp; }   // いまの速さ（px/ms、少しならす）
+        if (!moved && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - y0)) moved = true;
         if (moved) tr.style.transform = 'translateX(calc(' + (-i * 100) + '% + ' + dx + 'px))';
       });
       function end() {
         if (!dragging) return;
-        dragging = false; tr.style.transition = '';
-        if (moved && Math.abs(dx) > Math.min(60, vp.clientWidth * .15)) go(dx < 0 ? i + 1 : i - 1); else go(i);
+        dragging = false;
+        var far = Math.abs(dx) > Math.min(50, vp.clientWidth * .12);           // ある程度ずらした
+        // 短くても、すばやくはじいた（さいごの動きの速さか、押してから離すまでの平均の速さ。ブラウザは1コマ分の動きをまとめて送ってくることがあるので両方見る）
+        var avg = dx / Math.max(1, performance.now() - downT);
+        var flick = Math.abs(dx) > 20 && Math.max(Math.abs(vel) * ((vel < 0) === (dx < 0) ? 1 : 0), Math.abs(avg)) > 0.25;
+        if (moved && (far || flick)) go(dx < 0 ? i + 1 : i - 1, true); else go(i, true);
         start();
       }
       vp.addEventListener('pointerup', end);
       vp.addEventListener('pointercancel', end);
-      vp.addEventListener('lostpointercapture', function () {
+      // つかんでいた枠そのものが手放したときだけ終える（中の写真から枠へつかみなおしたときにも来るので、それは見ない）
+      vp.addEventListener('lostpointercapture', function (e) {
+        if (e.target !== vp) return;
         end();
         // 押したまま枠の外で離すと「マウスが離れた」が来ないので、つかみ終わったあとで、マウスがいまどこにあるかを見なおす
         setTimeout(function () { if (inside.mouse && !el.matches(':hover')) pause('mouse', false); }, 0);
