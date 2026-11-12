@@ -138,6 +138,22 @@ window.SITE_I18N.en = {
     'Free',
   '学部・学年は問いません':
     'Any major, any year',
+  '第2回ワークショップ':
+    'Workshop 2',
+  '第2回':
+    'Workshop 2',
+  'ChatGPTを、その仕事のプロにしよう':
+    'Make ChatGPT a pro at the job',
+  'ChatGPTを、':
+    'Make ChatGPT',
+  'その仕事のプロにしよう。':
+    'a pro at the job.',
+  'Skillを作る・借りる':
+    'Make and borrow Skills',
+  '第3回・第4回ワークショップ':
+    'Workshops 3–4',
+  '第3回からの日程は、決まり次第このページに載せます。':
+    'Dates from Workshop 3 on will be posted here once confirmed.',
   '第2回〜第4回ワークショップ':
     'Workshops 2–4',
   '12月まで':

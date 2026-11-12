@@ -6,13 +6,14 @@
   /* サイトのページ一覧。メニューはこの順に並びます。
      ready が false のページは、まだ作っていません。そのあいだは alt に書いた場所（[ページ, その中の場所]）へ移ります。
      alt もなければ、押すと「準備中です」と出ます。
-     wide が true のページは、パソコンの幅のときだけメニューに出ます（スマホのメニューは5つまで）。 */
+     wide が true のページは、パソコンの幅のときだけメニューに出ます（スマホのメニューは5つまで）。
+     Studio Hours はまだ始まっていないので、いまはスマホのメニューから外し、かわりに運営メンバーを出しています（2026-11-12）。 */
   var PAGES = [
     { key: 'next', label: '次回', file: 'next.html', ready: true },
     { key: 'works', label: '作品', file: 'works.html', ready: true },
     { key: 'records', label: '活動記録', file: 'records.html', ready: true },
-    { key: 'studio', label: 'Studio Hours', file: 'studio.html', ready: true, alt: ['about', 'do'] },
-    { key: 'members', label: '運営メンバー', file: 'members.html', ready: true, alt: ['about', 'who'], wide: true },
+    { key: 'studio', label: 'Studio Hours', file: 'studio.html', ready: true, alt: ['about', 'do'], wide: true },
+    { key: 'members', label: '運営メンバー', file: 'members.html', ready: true, alt: ['about', 'who'] },
     { key: 'about', label: 'はじめての方へ', file: 'about.html', ready: true }
   ];
   // Campus Leadのバッジ（OpenAIから支給された画像）。色や形を変えたり、回したり、切り抜いたりしないでください
