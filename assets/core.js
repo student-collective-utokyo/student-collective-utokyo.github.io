@@ -143,7 +143,7 @@
     record: ['id', 'date', 'label', 'title', 'titleLines', 'image', 'focus', 'lead', 'summary', 'photos', 'topics', 'steps', 'prompts'],
     recPhoto: ['src', 'cap', 'focus'],
     recTopic: ['id', 'h', 'body'],
-    recBlock: ['p', 'photo', 'slide', 'cap', 'alt', 'prompt', 'list', 'links', 'works'],
+    recBlock: ['p', 'photo', 'slide', 'video', 'poster', 'cap', 'alt', 'prompt', 'list', 'links', 'works'],
     recStep: ['h', 'p', 'link', 'prompt'],
     recPrompt: ['label', 'text'],
     member: ['name', 'kana', 'role', 'note', 'intro', 'like', 'image', 'email'],
@@ -290,6 +290,8 @@
           var bt = at + ' の body の' + (k + 1) + '番目';
           known(b, KEYS.recBlock, bt);
           if (b.p != null) return { p: str(b.p) };
+          // 動画（音なし・短いもの）。poster は再生する前に出す画像
+          if (b.video != null) return { video: str(b.video), poster: str(b.poster), cap: str(b.cap), alt: str(b.alt) || str(b.cap) };
           if (b.photo != null || b.slide != null) return { img: str(b.photo != null ? b.photo : b.slide), slide: b.slide != null, cap: str(b.cap), alt: str(b.alt) || str(b.cap) };
           if (b.prompt != null) { var pk = promptKey(b.prompt, bt); return pk ? { prompt: pk } : null; }
           if (b.list != null) {
@@ -301,7 +303,8 @@
           if (b.links != null) { listed(b.links, bt + ' の links'); return { links: list(b.links).map(function (x) {
             var u = str(list(x)[1]);
             if (/^https?:/i.test(u)) u = link(u, bt + ' の links');
-            else if (u && !/^[\w-]+\.html$/.test(u)) { issues.push(bt + '：ボタンのアドレス「' + u + '」は使えません。https:// ではじまる形か、works.html のようなこのサイトのページの名前だけ（? や # はつけない）を書いてください。'); u = ''; }
+            // ほかの回の記録へは record.html?id=w1 の形だけ使える（〔第2回の記録〕第1回の記録へのボタン）
+            else if (u && !/^[\w-]+\.html$/.test(u) && !/^record\.html\?id=[\w-]+$/.test(u)) { issues.push(bt + '：ボタンのアドレス「' + u + '」は使えません。https:// ではじまる形か、works.html のようなこのサイトのページの名前だけ（? や # はつけない。ほかの回の記録は record.html?id=w1 の形）を書いてください。'); u = ''; }
             return [str(list(x)[0]), u];
           }).filter(function (x) { return x[0] && x[1]; }) }; }
           if (b.works != null) {
@@ -312,7 +315,7 @@
             });
             return { works: ws };
           }
-          issues.push(bt + '：p・photo・slide・prompt・list・links・works のどれかを書いてください。いまは出していません。');
+          issues.push(bt + '：p・photo・slide・video・prompt・list・links・works のどれかを書いてください。いまは出していません。');
           return null;
         }).filter(Boolean);
         return { id: tid, h: str(tp.h), body: body };
@@ -444,7 +447,7 @@
     if (M) [['works', M.works], ['examples', M.examples], ['records', M.records], ['members', M.members]].forEach(function (g) {
       g[1].forEach(function (x) {
         var who = g[0] + '（' + (x.title || x.name || '') + '）', seen = {};
-        [x.image].concat(x.shots || [], (x.photos || []).map(function (p) { return p.src; }), [].concat.apply([], (x.topics || []).map(function (tp) { return tp.body.map(function (b) { return b.img; }); })))
+        [x.image].concat(x.shots || [], (x.photos || []).map(function (p) { return p.src; }), [].concat.apply([], (x.topics || []).map(function (tp) { return tp.body.map(function (b) { return b.img || b.poster; }); })))
           .forEach(function (u) { if (u && !seen[u]) { seen[u] = true; imgs.push([who, u]); } });
       });
     });
@@ -452,6 +455,15 @@
       var im = new Image();
       im.onerror = function () { issues.push(x[0] + '：画像「' + x[1] + '」を読みこめません。ファイルの名前と置き場所を確かめてください。'); draw(); };
       im.src = x[1];
+    });
+    // 動画のファイルもあるかを確かめる
+    if (M) M.records.forEach(function (r) {
+      (r.topics || []).forEach(function (tp) { tp.body.forEach(function (b) {
+        if (!b.video) return;
+        fetch(b.video, { method: 'HEAD' }).then(function (res) { if (!res.ok) throw 0; }).catch(function () {
+          issues.push('records（' + r.title + '）：動画「' + b.video + '」を読みこめません。ファイルの名前と置き場所を確かめてください。'); draw();
+        });
+      }); });
     });
   }
 

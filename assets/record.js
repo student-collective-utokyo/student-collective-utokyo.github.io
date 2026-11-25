@@ -36,10 +36,17 @@
       '<pre>' + esc(p.text) + '</pre>' + (long ? '<button type="button" class="rd-pr-more" aria-expanded="false"><span>' + T('全文を見る') + '</span>' + DOWN + '</button>' : '') + '</div>';
   }
   // このサイトのページ（'works.html' など）は、いまのことばのまま開く。外のアドレスはそのまま
-  function href(u) { return /^https?:/i.test(u) ? u : Site.href(u); }
+  // ほかの回の記録（record.html?id=w1）は、?lang や ?demo を id のうしろに & でつなぐ（Site.href のままだと ? が2つになって開けない）
+  function href(u) {
+    if (/^https?:/i.test(u)) return u;
+    var m = /^record\.html\?id=([\w-]+)$/.exec(u);
+    return m ? U.recHref(m[1]) : Site.href(u);
+  }
   function block(b) {
     if (b.p != null) return '<p>' + esc(b.p) + '</p>';
     if (b.img) return fig(b);
+    if (b.video) return '<figure class="rd-fig rd-video"><video src="' + esc(b.video) + '"' + (b.poster ? ' poster="' + esc(b.poster) + '"' : '') + ' controls muted playsinline preload="metadata" aria-label="' + esc(b.alt) + '"></video>' +
+      (b.cap ? '<figcaption>' + esc(b.cap) + '</figcaption>' : '') + '</figure>';
     if (b.prompt) return prompt(b.prompt);
     if (b.list) return '<ol class="rd-list">' + b.list.map(function (x, i) { return '<li><b><i>' + (i + 1) + '</i>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></li>'; }).join('') + '</ol>';
     if (b.links) return '<div class="rd-links">' + b.links.map(function (l) {

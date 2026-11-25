@@ -35,6 +35,7 @@ body[data-view="record"]{--paper:#F4F2F0;--ink:#14162B;--mute:#5d5f70;--body:#33
 .rd-zoom-ic{position:absolute;right:10px;bottom:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;opacity:0;transition:opacity .15s;color:var(--ink)}
 .rd-zoom-ic svg{width:18px;height:18px}
 .rd-zoomable:hover .rd-zoom-ic,.rd-zoomable:focus-visible .rd-zoom-ic{opacity:1}
+.rd-video video{display:block;width:100%;height:auto;aspect-ratio:1280/738;border-radius:14px;background:#1b1d2b;border:1px solid rgba(20,22,43,.08);box-shadow:0 10px 30px -18px rgba(20,22,43,.35)}
 .rd-fig figcaption{font-size:13px;color:var(--mute);margin-top:8px}
 
 /* コピーできる文章 */
