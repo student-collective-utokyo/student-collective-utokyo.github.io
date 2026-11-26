@@ -150,6 +150,14 @@ window.SITE_I18N.en = {
     'a pro at the job.',
   'Skillを作る・借りる':
     'Make and borrow Skills',
+  '第3回ワークショップ':
+    'Workshop 3',
+  '第3回':
+    'Workshop 3',
+  '第4回ワークショップ':
+    'Workshop 4',
+  '第3回の時間と場所、第4回からの日程は、決まり次第このページに載せます。':
+    'Time and place for Workshop 3, and dates from Workshop 4 on, will be posted here once confirmed.',
   '第3回・第4回ワークショップ':
     'Workshops 3–4',
   '第3回からの日程は、決まり次第このページに載せます。':
@@ -474,6 +482,8 @@ window.SITE_I18N.en = {
     'Check the next date',
   '日程は、決まり次第このサイトに載せます。':
     'Dates will be posted on this site once they’re set.',
+  '申し込みは準備中です。準備ができ次第、申し込めるようになります。':
+    'Sign-up isn’t open yet. It will open once it’s ready.',
   '申し込みは準備中です。日程が決まり次第、申し込めるようになります。':
     'Sign-up isn’t open yet. It will open once the date is set.',
   '次回のページから申し込めます。':
